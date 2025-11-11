@@ -272,12 +272,17 @@ function updatePrinterStatus(printerId, status) {
             `;
         }).join('');
 
+        // Show humidity if available
+        const humidity = amsData.humidity || '0';
+        const humidityHTML = humidity !== '0' ? `<div class="ams-humidity" title="AMS Humidity">💧 ${humidity}%</div>` : '';
+
         return `
             <div class="ams-section">
                 <div class="ams-label">AMS:</div>
                 <div class="ams-trays">
                     ${traysHTML}
                 </div>
+                ${humidityHTML}
             </div>
         `;
     }

@@ -524,6 +524,7 @@ header h1 {
     padding: 12px 0 0 0;
     margin-top: 12px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
+    flex-wrap: wrap;
 }
 
 .ams-label {
@@ -539,6 +540,16 @@ header h1 {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
+}
+
+.ams-humidity {
+    font-size: 0.85rem;
+    padding: 4px 10px;
+    background: rgba(33, 150, 243, 0.2);
+    border: 1px solid rgba(33, 150, 243, 0.4);
+    border-radius: 12px;
+    color: #64b5f6;
+    font-weight: 600;
 }
 
 .ams-tray {

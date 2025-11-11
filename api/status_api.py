@@ -55,7 +55,8 @@ def parse_bambu_status(payload):
             'ams': {
                 'has_ams': False,
                 'trays': [],
-                'active_tray': None
+                'active_tray': None,
+                'humidity': '0'
             }
         }
 
@@ -92,71 +93,61 @@ def parse_bambu_status(payload):
             status['fan_speed'] = print_data['big_fan1_speed']
 
         # Parse AMS (Automatic Material System) data
-        # Try multiple possible MQTT structures for AMS data
-        if 'ams' in data:
+        # Bambu structure: data['print']['ams']['ams'][0]['tray']
+        # Active tray: data['print']['ams']['tray_now']
+        # Humidity: data['print']['ams']['ams'][0]['humidity']
+        if 'ams' in print_data:
             try:
-                ams_data = data['ams']
+                ams_data = print_data['ams']
 
-                # Try structure 1: data['ams']['ams'][0]['tray']
-                ams_list = None
+                # Check if AMS exists
                 if isinstance(ams_data, dict) and 'ams' in ams_data:
                     ams_list = ams_data.get('ams', [])
-                # Try structure 2: data['ams'] is directly the list
-                elif isinstance(ams_data, list):
-                    ams_list = ams_data
-                # Try structure 3: data['ams'] is directly the unit
-                elif isinstance(ams_data, dict) and 'tray' in ams_data:
-                    ams_list = [ams_data]
 
-                if ams_list and len(ams_list) > 0:
-                    # Get first AMS unit
-                    ams_unit = ams_list[0] if isinstance(ams_list, list) else ams_list
+                    if isinstance(ams_list, list) and len(ams_list) > 0:
+                        # Get first AMS unit
+                        ams_unit = ams_list[0]
 
-                    if isinstance(ams_unit, dict) and 'tray' in ams_unit:
-                        status['ams']['has_ams'] = True
+                        if isinstance(ams_unit, dict) and 'tray' in ams_unit:
+                            status['ams']['has_ams'] = True
 
-                        # Get active tray - try multiple field names
-                        for field in ['tray_now', 'tray_tar', 'tray_id', 'tray_index']:
-                            if field in ams_unit and ams_unit[field] is not None:
-                                status['ams']['active_tray'] = str(ams_unit[field])
-                                break
+                            # Get humidity from AMS unit
+                            if 'humidity' in ams_unit:
+                                status['ams']['humidity'] = ams_unit.get('humidity', '0')
 
-                        # Also check at parent level
-                        if not status['ams']['active_tray'] and isinstance(ams_data, dict):
-                            for field in ['tray_now', 'tray_tar', 'tray_id', 'tray_index']:
-                                if field in ams_data and ams_data[field] is not None:
-                                    status['ams']['active_tray'] = str(ams_data[field])
-                                    break
+                            # Get active tray from parent ams_data
+                            if 'tray_now' in ams_data:
+                                status['ams']['active_tray'] = str(ams_data['tray_now'])
 
-                        # Parse tray information
-                        tray_list = ams_unit.get('tray', [])
-                        if isinstance(tray_list, list):
-                            trays = []
-                            for idx, tray in enumerate(tray_list):
-                                if not isinstance(tray, dict):
-                                    continue
+                            # Parse tray information
+                            tray_list = ams_unit.get('tray', [])
+                            if isinstance(tray_list, list):
+                                trays = []
+                                for tray in tray_list:
+                                    if not isinstance(tray, dict):
+                                        continue
 
-                                # Get color - try different field names
-                                color = tray.get('tray_color') or tray.get('cols') or 'CCCCCC'
-                                if isinstance(color, str) and len(color) >= 6:
-                                    color = color[:6].upper()  # Strip alpha and uppercase
-                                else:
-                                    color = 'CCCCCC'
+                                    # Get color (RRGGBBAA format - strip alpha)
+                                    color = tray.get('tray_color', 'CCCCCCFF')
+                                    if isinstance(color, str) and len(color) >= 6:
+                                        color = color[:6].upper()  # Strip FF alpha
+                                    else:
+                                        color = 'CCCCCC'
 
-                                # Get type
-                                tray_type = tray.get('tray_type') or tray.get('type') or ''
+                                    # Get type
+                                    tray_type = tray.get('tray_type', '')
 
-                                tray_info = {
-                                    'id': str(tray.get('id', str(idx))),
-                                    'color': color,
-                                    'type': tray_type,
-                                    'name': tray.get('tray_sub_brands', ''),
-                                    'empty': tray_type == ''
-                                }
-                                trays.append(tray_info)
+                                    tray_info = {
+                                        'id': str(tray.get('id', '')),
+                                        'color': color,
+                                        'type': tray_type,
+                                        'name': tray.get('tray_sub_brands', ''),
+                                        'empty': tray_type == ''
+                                    }
+                                    trays.append(tray_info)
 
-                            if trays:
-                                status['ams']['trays'] = trays
+                                if trays:
+                                    status['ams']['trays'] = trays
 
             except Exception as e:
                 # Silently fail AMS parsing - don't break status updates
@@ -284,7 +275,8 @@ def connect_printer_mqtt(printer):
         'ams': {
             'has_ams': False,
             'trays': [],
-            'active_tray': None
+            'active_tray': None,
+            'humidity': '0'
         }
     }
 
