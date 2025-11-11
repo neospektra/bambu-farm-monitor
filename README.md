@@ -44,11 +44,21 @@ A comprehensive web-based monitoring solution for multiple Bambu Lab 3D printers
 - Bambu Lab printer(s) on your local network
 - Printer access codes and serial numbers (found in printer settings)
 
+### Docker Hub
+
+**All images are hosted on Docker Hub:** https://hub.docker.com/r/neospektra/bambu-farm-monitor
+
+The image name `neospektra/bambu-farm-monitor:latest` automatically pulls from Docker Hub.
+
 ### Installation
 
 #### Option 1: Docker Run (Recommended for Testing)
 
 ```bash
+# Pull from Docker Hub
+docker pull neospektra/bambu-farm-monitor:latest
+
+# Run the container
 docker run -d \
   --name bambu-farm-monitor \
   -p 8080:8080 \
@@ -69,7 +79,7 @@ version: '3.8'
 
 services:
   bambu-farm-monitor:
-    image: neospektra/bambu-farm-monitor:latest
+    image: neospektra/bambu-farm-monitor:latest  # From Docker Hub
     container_name: bambu-farm-monitor
     ports:
       - "8080:8080"   # Web UI
@@ -90,6 +100,10 @@ docker-compose up -d
 #### Option 3: Podman (for QNAP, Synology, or rootless containers)
 
 ```bash
+# Pull from Docker Hub (Podman also uses Docker Hub by default)
+podman pull docker.io/neospektra/bambu-farm-monitor:latest
+
+# Run the container
 podman run -d \
   --name bambu-farm-monitor \
   -p 8080:8080 \
@@ -167,13 +181,14 @@ docker run -d \
 
 1. **Container Station Method:**
    - Open Container Station
-   - Click "Create" → "Create Application"
-   - Paste the Docker Compose configuration above
-   - Click "Create"
+   - Go to "Images" → Search for `neospektra/bambu-farm-monitor` on Docker Hub
+   - Download the `latest` tag
+   - Or click "Create" → "Create Application" and paste the Docker Compose configuration above
 
 2. **Command Line Method (SSH):**
    ```bash
-   podman pull neospektra/bambu-farm-monitor:latest
+   # Pull from Docker Hub
+   podman pull docker.io/neospektra/bambu-farm-monitor:latest
    podman run -d \
      --name bambu-farm-monitor \
      -p 8080:8080 -p 1984:1984 -p 5000:5000 -p 5001:5001 \
@@ -183,11 +198,13 @@ docker run -d \
 
 ### Synology NAS
 
-1. Open Docker app
-2. Go to Registry and search for `neospektra/bambu-farm-monitor`
-3. Download the `latest` tag
-4. Go to Image → Launch
-5. Configure port mappings:
+1. Open Docker app (or Container Manager on DSM 7.2+)
+2. Go to "Registry" tab
+3. Search for `neospektra/bambu-farm-monitor` (searches Docker Hub by default)
+4. Select the image and click "Download"
+5. Choose the `latest` tag
+6. Go to "Image" tab → Select the downloaded image → Click "Launch"
+7. Configure port mappings:
    - Container Port 8080 → Local Port 8080
    - Container Port 1984 → Local Port 1984
    - Container Port 5000 → Local Port 5000
@@ -198,9 +215,9 @@ docker run -d \
 ### Unraid
 
 1. Go to Docker tab
-2. Add Container
-3. Use template:
-   - Repository: `neospektra/bambu-farm-monitor:latest`
+2. Click "Add Container"
+3. Fill in the template:
+   - Repository: `neospektra/bambu-farm-monitor:latest` (pulls from Docker Hub)
    - Name: `bambu-farm-monitor`
    - Port: `8080` → `8080`
    - Port: `1984` → `1984`
@@ -440,4 +457,10 @@ If you find this project useful, please consider:
 
 **Made with ❤️ for the 3D printing community**
 
-🐳 **Docker Hub**: [neospektra/bambu-farm-monitor](https://hub.docker.com/r/neospektra/bambu-farm-monitor)
+## 🔗 Links
+
+- 🐳 **Docker Hub**: https://hub.docker.com/r/neospektra/bambu-farm-monitor
+- 💻 **GitHub Repository**: https://github.com/neospektra/bambu-farm-monitor
+- 📖 **Documentation**: [Wiki](https://github.com/neospektra/bambu-farm-monitor/wiki)
+- 🐛 **Bug Reports**: [GitHub Issues](https://github.com/neospektra/bambu-farm-monitor/issues)
+- 💬 **Discussions**: [GitHub Discussions](https://github.com/neospektra/bambu-farm-monitor/discussions)
