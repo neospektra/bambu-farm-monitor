@@ -351,9 +351,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📧 Support
 
-- 🐛 **Bug Reports**: [GitHub Issues](https://github.com/yourusername/bambu-farm-monitor/issues)
-- 💬 **Discussions**: [GitHub Discussions](https://github.com/yourusername/bambu-farm-monitor/discussions)
-- 📖 **Documentation**: [Wiki](https://github.com/yourusername/bambu-farm-monitor/wiki)
+- 🐛 **Bug Reports**: [GitHub Issues](https://github.com/neospektra/bambu-farm-monitor/issues)
+- 💬 **Discussions**: [GitHub Discussions](https://github.com/neospektra/bambu-farm-monitor/discussions)
+- 📖 **Documentation**: [Wiki](https://github.com/neospektra/bambu-farm-monitor/wiki)
 
 ## ⭐ Show Your Support
 
