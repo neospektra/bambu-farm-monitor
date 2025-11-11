@@ -4,12 +4,13 @@ Configuration API for Bambu Farm Monitor
 Provides REST endpoints for managing printer configuration and retrieving status
 """
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import json
 import os
 import subprocess
 import signal
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -234,6 +235,81 @@ def bulk_update_printers():
     restart_go2rtc()
 
     return jsonify({"success": True, "printers": config['printers']})
+
+@app.route('/api/config/export', methods=['GET'])
+def export_config():
+    """Export printer configuration as JSON file"""
+    try:
+        config = load_config()
+
+        # Create a backup filename with timestamp
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        filename = f'bambu_config_{timestamp}.json'
+
+        # Save to temporary file
+        temp_path = f'/tmp/{filename}'
+        with open(temp_path, 'w') as f:
+            json.dump(config, f, indent=2)
+
+        return send_file(
+            temp_path,
+            mimetype='application/json',
+            as_attachment=True,
+            download_name=filename
+        )
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/config/import', methods=['POST'])
+def import_config():
+    """Import printer configuration from JSON file"""
+    try:
+        # Check if file was uploaded
+        if 'file' not in request.files:
+            return jsonify({"error": "No file uploaded"}), 400
+
+        file = request.files['file']
+
+        if file.filename == '':
+            return jsonify({"error": "No file selected"}), 400
+
+        # Read and parse JSON
+        try:
+            config_data = json.load(file)
+        except json.JSONDecodeError:
+            return jsonify({"error": "Invalid JSON file"}), 400
+
+        # Validate config structure
+        if 'printers' not in config_data:
+            return jsonify({"error": "Invalid configuration format - missing 'printers' key"}), 400
+
+        if not isinstance(config_data['printers'], list):
+            return jsonify({"error": "Invalid configuration format - 'printers' must be an array"}), 400
+
+        # Validate each printer has required fields
+        for i, printer in enumerate(config_data['printers']):
+            required_fields = ['id', 'name', 'ip', 'access_code']
+            for field in required_fields:
+                if field not in printer:
+                    return jsonify({"error": f"Printer {i+1} missing required field: {field}"}), 400
+
+        # Save configuration
+        save_config(config_data)
+
+        # Regenerate go2rtc config
+        regenerate_go2rtc_config(config_data)
+
+        # Restart go2rtc
+        restart_go2rtc()
+
+        return jsonify({
+            "success": True,
+            "message": f"Successfully imported {len(config_data['printers'])} printers",
+            "printers": config_data['printers']
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     # Initialize config file if it doesn't exist

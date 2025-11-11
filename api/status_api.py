@@ -50,7 +50,12 @@ def parse_bambu_status(payload):
             'print_time_remaining': 0,
             'print_time_elapsed': 0,
             'print_file': '',
-            'print_status': 'idle'
+            'print_status': 'idle',
+            'ams': {
+                'has_ams': False,
+                'trays': [],
+                'active_tray': None
+            }
         }
 
         # Extract temperature data
@@ -84,6 +89,32 @@ def parse_bambu_status(payload):
         # Fan speed
         if 'big_fan1_speed' in print_data:
             status['fan_speed'] = print_data['big_fan1_speed']
+
+        # Parse AMS (Automatic Material System) data
+        if 'ams' in data:
+            ams_data = data['ams']
+            if 'ams' in ams_data and len(ams_data['ams']) > 0:
+                status['ams']['has_ams'] = True
+                # Get first AMS unit (most printers have only one)
+                ams_unit = ams_data['ams'][0]
+
+                # Get active tray info
+                if 'tray_now' in ams_unit:
+                    status['ams']['active_tray'] = ams_unit['tray_now']
+
+                # Parse tray information
+                if 'tray' in ams_unit:
+                    trays = []
+                    for tray in ams_unit['tray']:
+                        tray_info = {
+                            'id': tray.get('id', ''),
+                            'color': tray.get('tray_color', 'CCCCCC'),  # Default gray if no color
+                            'type': tray.get('tray_type', ''),
+                            'name': tray.get('tray_sub_brands', ''),
+                            'empty': tray.get('tray_type', '') == ''  # Empty if no type
+                        }
+                        trays.append(tray_info)
+                    status['ams']['trays'] = trays
 
         return status
     except Exception as e:
@@ -125,6 +156,10 @@ def on_message(client, userdata, msg):
         printer_status[printer_id]['bed_temp'] = status['bed_temp']
         printer_status[printer_id]['chamber_temp'] = status['chamber_temp']
         printer_status[printer_id]['connected'] = status['connected']
+
+        # Always update AMS data when present
+        if status['ams']['has_ams']:
+            printer_status[printer_id]['ams'] = status['ams']
 
         # Only update print job data if the new status has valid print info
         current_printing = printer_status[printer_id].get('printing', False)
@@ -192,7 +227,12 @@ def connect_printer_mqtt(printer):
         'print_file': '',
         'print_status': 'unknown',
         'serial': serial,
-        'ip': ip
+        'ip': ip,
+        'ams': {
+            'has_ams': False,
+            'trays': [],
+            'active_tray': None
+        }
     }
 
     try:

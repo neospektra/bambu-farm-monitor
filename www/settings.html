@@ -30,6 +30,16 @@
                 <button onclick="reloadConfig()" class="btn btn-secondary">🔄 Reload Configuration</button>
             </div>
 
+            <div class="backup-section">
+                <h3>📦 Backup & Restore</h3>
+                <p class="backup-info">Export your printer configuration to backup or transfer to another system. Import a previously exported configuration file.</p>
+                <div class="backup-actions">
+                    <button onclick="exportConfig()" class="btn btn-backup">📥 Export Configuration</button>
+                    <button onclick="document.getElementById('import-file').click()" class="btn btn-backup">📤 Import Configuration</button>
+                    <input type="file" id="import-file" accept=".json" style="display: none" onchange="importConfig(event)">
+                </div>
+            </div>
+
             <div id="status-message" class="status-message hidden"></div>
         </main>
 

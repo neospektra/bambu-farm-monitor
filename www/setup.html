@@ -258,6 +258,28 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
+
+        .import-option {
+            margin-top: 40px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+
+        .import-option p {
+            margin-bottom: 15px;
+            opacity: 0.8;
+            font-size: 1rem;
+        }
+
+        .import-status {
+            margin-top: 15px;
+            min-height: 24px;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -307,6 +329,13 @@
                         <div class="count-number">4</div>
                         <div>Printers</div>
                     </div>
+                </div>
+
+                <div class="import-option">
+                    <p>Or import an existing configuration:</p>
+                    <button class="btn btn-secondary" onclick="document.getElementById('setup-import-file').click()">📤 Import Configuration File</button>
+                    <input type="file" id="setup-import-file" accept=".json" style="display: none" onchange="importSetupConfig(event)">
+                    <div id="import-status" class="import-status"></div>
                 </div>
             </div>
 
@@ -493,6 +522,52 @@
                 }
             }
         });
+
+        // Import configuration from file
+        async function importSetupConfig(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const statusDiv = document.getElementById('import-status');
+            statusDiv.innerHTML = '<span style="color: #2196f3;">📤 Importing configuration...</span>';
+
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                const response = await fetch('/api/config/import', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'Failed to import configuration');
+                }
+
+                statusDiv.innerHTML = `<span style="color: #4caf50;">✓ Successfully imported ${result.printers.length} printers!</span>`;
+
+                // Reconnect MQTT
+                try {
+                    await fetch('/api/status/reconnect', { method: 'POST' });
+                } catch (mqttError) {
+                    console.error('Error reconnecting MQTT:', mqttError);
+                }
+
+                // Redirect to dashboard after 2 seconds
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 2000);
+
+            } catch (error) {
+                console.error('Error importing configuration:', error);
+                statusDiv.innerHTML = `<span style="color: #f44336;">✗ Error: ${error.message}</span>`;
+            } finally {
+                // Clear file input
+                event.target.value = '';
+            }
+        }
 
         // Initialize
         updateStepIndicator();

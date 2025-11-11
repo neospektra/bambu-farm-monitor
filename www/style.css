@@ -516,6 +516,72 @@ header h1 {
     opacity: 0.7;
 }
 
+/* AMS Color Display */
+.ams-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0 0 0;
+    margin-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ams-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    opacity: 0.8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    min-width: 40px;
+}
+
+.ams-trays {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.ams-tray {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.ams-color {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.ams-tray.active .ams-color {
+    border-color: #66bb6a;
+    border-width: 3px;
+    box-shadow: 0 0 12px rgba(102, 187, 106, 0.6);
+    transform: scale(1.1);
+}
+
+.ams-tray.empty .ams-color {
+    opacity: 0.4;
+    border-style: dashed;
+}
+
+.ams-indicator {
+    font-size: 0.7rem;
+    color: #66bb6a;
+    font-weight: bold;
+    animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+
 @media (max-width: 768px) {
     .status-grid {
         grid-template-columns: 1fr;
@@ -524,6 +590,17 @@ header h1 {
     .idle-temps {
         flex-direction: column;
         gap: 10px;
+    }
+
+    .ams-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .ams-color {
+        width: 28px;
+        height: 28px;
     }
 }
 

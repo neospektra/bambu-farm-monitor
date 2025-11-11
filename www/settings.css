@@ -284,3 +284,50 @@
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
 }
+
+/* Backup & Restore Section */
+.backup-section {
+    margin-top: 40px;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.backup-section h3 {
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+    color: #fff;
+}
+
+.backup-info {
+    margin-bottom: 20px;
+    opacity: 0.8;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.backup-actions {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.btn-backup {
+    padding: 12px 24px;
+    background: rgba(33, 150, 243, 0.2);
+    color: white;
+    border: 2px solid rgba(33, 150, 243, 0.5);
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-backup:hover {
+    background: rgba(33, 150, 243, 0.3);
+    border-color: rgba(33, 150, 243, 0.7);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+}

@@ -337,6 +337,70 @@ function showStatus(message, type) {
     }
 }
 
+// Export configuration
+async function exportConfig() {
+    try {
+        showStatus('📥 Exporting configuration...', 'info');
+
+        // Trigger download by opening the export endpoint
+        window.location.href = `${API_BASE}/api/config/export`;
+
+        setTimeout(() => {
+            showStatus('✓ Configuration exported successfully!', 'success');
+        }, 1000);
+
+    } catch (error) {
+        console.error('Error exporting configuration:', error);
+        showStatus(`✗ Error: ${error.message}`, 'error');
+    }
+}
+
+// Import configuration
+async function importConfig(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (!confirm('Are you sure you want to import this configuration? This will replace all current printer settings.')) {
+        event.target.value = ''; // Clear file input
+        return;
+    }
+
+    showStatus('📤 Importing configuration...', 'info');
+
+    try {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await fetch(`${API_BASE}/api/config/import`, {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.error || 'Failed to import configuration');
+        }
+
+        showStatus(`✓ ${result.message}`, 'success');
+
+        // Reconnect MQTT after import
+        await reconnectMQTT();
+
+        // Reload the printer list
+        setTimeout(() => {
+            loadPrinters();
+        }, 2000);
+
+    } catch (error) {
+        console.error('Error importing configuration:', error);
+        showStatus(`✗ Error: ${error.message}`, 'error');
+    } finally {
+        // Clear file input
+        event.target.value = '';
+    }
+}
+
 // Initialize when page loads
 document.addEventListener('DOMContentLoaded', () => {
     loadPrinters();

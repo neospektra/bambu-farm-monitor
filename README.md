@@ -2,7 +2,7 @@
 
 A comprehensive web-based monitoring solution for multiple Bambu Lab 3D printers. Monitor your entire print farm from a single dashboard with real-time video streams and MQTT status updates.
 
-![Version](https://img.shields.io/badge/version-3.2.0-blue.svg)
+![Version](https://img.shields.io/badge/version-3.3.0-blue.svg)
 ![Docker Pulls](https://img.shields.io/docker/pulls/neospektra/bambu-farm-monitor)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
@@ -10,9 +10,11 @@ A comprehensive web-based monitoring solution for multiple Bambu Lab 3D printers
 
 - 🎥 **Real-time Video Streams** - Live camera feeds from all your Bambu Lab printers using WebRTC
 - 📊 **MQTT Status Monitoring** - Real-time print progress, temperatures, layer info, and time remaining
+- 🎨 **AMS Color Display** - Visual display of loaded filament colors and active tray indicator
 - ⚡ **Dynamic Printer Management** - Add or remove printers on the fly (no restart required)
 - 📐 **Resizable Windows** - Customize printer window sizes to your preference
-- 🎯 **Setup Wizard** - Easy first-run configuration for quick deployment
+- 💾 **Backup & Restore** - Export and import printer configurations for easy backup or migration
+- 🎯 **Setup Wizard** - Easy first-run configuration with optional config file import
 - 🔄 **Auto-reconnect** - Automatic MQTT reconnection after configuration changes
 - 📱 **Responsive Design** - Works on desktop, tablet, and mobile devices
 - 🐳 **Single Container** - All-in-one Docker container for easy deployment
@@ -312,7 +314,13 @@ Areas that need help:
 
 ## 📋 Changelog
 
-### v3.2.0 (Latest)
+### v3.3.0 (Latest)
+- ✅ AMS filament color display with active tray indicator
+- ✅ Backup & restore configuration (export/import JSON)
+- ✅ Import configuration option in setup wizard
+- ✅ Visual AMS tray status in both printing and idle states
+
+### v3.2.0
 - ✅ Fixed delete printer endpoint
 - ✅ Auto MQTT reconnect in setup wizard
 - ✅ Status updates now work immediately after setup

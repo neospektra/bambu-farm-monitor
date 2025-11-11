@@ -199,6 +199,11 @@ function mergeStatus(cached, newStatus) {
     merged.bed_temp = newStatus.bed_temp;
     merged.connected = newStatus.connected;
 
+    // Always update AMS data if present
+    if (newStatus.ams) {
+        merged.ams = newStatus.ams;
+    }
+
     // Only update printing info if the new data is complete
     if (newStatus.printing && newStatus.print_progress > 0 && newStatus.print_file) {
         merged.printing = newStatus.printing;
@@ -245,6 +250,37 @@ function updatePrinterStatus(printerId, status) {
     // Merge with cached status
     const mergedStatus = mergeStatus(lastKnownStatus[printerId], status);
     lastKnownStatus[printerId] = mergedStatus;
+
+    // Helper function to render AMS colors
+    function renderAMSColors(amsData) {
+        if (!amsData || !amsData.has_ams || !amsData.trays || amsData.trays.length === 0) {
+            return '';
+        }
+
+        const traysHTML = amsData.trays.map((tray, index) => {
+            const isActive = amsData.active_tray === tray.id || amsData.active_tray === String(index);
+            const color = tray.empty ? 'CCCCCC' : tray.color;
+            const activeClass = isActive ? 'active' : '';
+            const emptyClass = tray.empty ? 'empty' : '';
+            const type = tray.type || 'Empty';
+
+            return `
+                <div class="ams-tray ${activeClass} ${emptyClass}" title="${type}">
+                    <div class="ams-color" style="background-color: #${color}"></div>
+                    ${isActive ? '<div class="ams-indicator">▼</div>' : ''}
+                </div>
+            `;
+        }).join('');
+
+        return `
+            <div class="ams-section">
+                <div class="ams-label">AMS:</div>
+                <div class="ams-trays">
+                    ${traysHTML}
+                </div>
+            </div>
+        `;
+    }
 
     // Update stream status indicator
     if (streamStatus) {
@@ -327,6 +363,7 @@ function updatePrinterStatus(printerId, status) {
                         </div>
                     </div>
                 </div>
+                ${renderAMSColors(mergedStatus.ams)}
             </div>
         `;
     } else {
@@ -337,6 +374,7 @@ function updatePrinterStatus(printerId, status) {
                     <span>🌡️ Nozzle: ${Math.round(mergedStatus.nozzle_temp || 0)}°</span>
                     <span>🌡️ Bed: ${Math.round(mergedStatus.bed_temp || 0)}°</span>
                 </div>
+                ${renderAMSColors(mergedStatus.ams)}
             </div>
         `;
     }
