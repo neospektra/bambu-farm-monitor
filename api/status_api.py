@@ -18,6 +18,7 @@ CORS(app)
 # Store printer status in memory
 printer_status = {}
 mqtt_clients = {}
+raw_mqtt_messages = {}  # Store last raw message for debugging
 
 CONFIG_FILE = '/app/config/printers.json'
 
@@ -91,54 +92,75 @@ def parse_bambu_status(payload):
             status['fan_speed'] = print_data['big_fan1_speed']
 
         # Parse AMS (Automatic Material System) data
-        # Bambu MQTT structure: data['ams']['ams'][0]['tray'] array
+        # Try multiple possible MQTT structures for AMS data
         if 'ams' in data:
             try:
                 ams_data = data['ams']
-                print(f"DEBUG: AMS data keys: {ams_data.keys() if isinstance(ams_data, dict) else 'not a dict'}")
 
-                if 'ams' in ams_data and isinstance(ams_data['ams'], list) and len(ams_data['ams']) > 0:
-                    status['ams']['has_ams'] = True
-                    # Get first AMS unit (most printers have only one)
-                    ams_unit = ams_data['ams'][0]
-                    print(f"DEBUG: AMS unit keys: {ams_unit.keys() if isinstance(ams_unit, dict) else 'not a dict'}")
+                # Try structure 1: data['ams']['ams'][0]['tray']
+                ams_list = None
+                if isinstance(ams_data, dict) and 'ams' in ams_data:
+                    ams_list = ams_data.get('ams', [])
+                # Try structure 2: data['ams'] is directly the list
+                elif isinstance(ams_data, list):
+                    ams_list = ams_data
+                # Try structure 3: data['ams'] is directly the unit
+                elif isinstance(ams_data, dict) and 'tray' in ams_data:
+                    ams_list = [ams_data]
 
-                    # Get active tray info - try different field names
-                    if 'tray_now' in ams_unit:
-                        status['ams']['active_tray'] = str(ams_unit['tray_now'])
-                    elif 'tray_tar' in ams_unit:
-                        status['ams']['active_tray'] = str(ams_unit['tray_tar'])
+                if ams_list and len(ams_list) > 0:
+                    # Get first AMS unit
+                    ams_unit = ams_list[0] if isinstance(ams_list, list) else ams_list
 
-                    print(f"DEBUG: Active tray: {status['ams']['active_tray']}")
+                    if isinstance(ams_unit, dict) and 'tray' in ams_unit:
+                        status['ams']['has_ams'] = True
 
-                    # Parse tray information
-                    if 'tray' in ams_unit and isinstance(ams_unit['tray'], list):
-                        trays = []
-                        for idx, tray in enumerate(ams_unit['tray']):
-                            if not isinstance(tray, dict):
-                                continue
+                        # Get active tray - try multiple field names
+                        for field in ['tray_now', 'tray_tar', 'tray_id', 'tray_index']:
+                            if field in ams_unit and ams_unit[field] is not None:
+                                status['ams']['active_tray'] = str(ams_unit[field])
+                                break
 
-                            # Bambu uses 'tray_color' field as RRGGBBAA hex string
-                            color = tray.get('tray_color', 'CCCCCC')
-                            if isinstance(color, str) and len(color) >= 6:
-                                color = color[:6]  # Strip alpha channel if present
+                        # Also check at parent level
+                        if not status['ams']['active_tray'] and isinstance(ams_data, dict):
+                            for field in ['tray_now', 'tray_tar', 'tray_id', 'tray_index']:
+                                if field in ams_data and ams_data[field] is not None:
+                                    status['ams']['active_tray'] = str(ams_data[field])
+                                    break
 
-                            tray_info = {
-                                'id': str(tray.get('id', str(idx))),
-                                'color': color,
-                                'type': tray.get('tray_type', ''),
-                                'name': tray.get('tray_sub_brands', ''),
-                                'empty': tray.get('tray_type', '') == ''  # Empty if no type
-                            }
-                            trays.append(tray_info)
-                            print(f"DEBUG: Tray {idx}: color={color}, type={tray_info['type']}, empty={tray_info['empty']}")
+                        # Parse tray information
+                        tray_list = ams_unit.get('tray', [])
+                        if isinstance(tray_list, list):
+                            trays = []
+                            for idx, tray in enumerate(tray_list):
+                                if not isinstance(tray, dict):
+                                    continue
 
-                        status['ams']['trays'] = trays
-                        print(f"DEBUG: Total trays parsed: {len(trays)}")
+                                # Get color - try different field names
+                                color = tray.get('tray_color') or tray.get('cols') or 'CCCCCC'
+                                if isinstance(color, str) and len(color) >= 6:
+                                    color = color[:6].upper()  # Strip alpha and uppercase
+                                else:
+                                    color = 'CCCCCC'
+
+                                # Get type
+                                tray_type = tray.get('tray_type') or tray.get('type') or ''
+
+                                tray_info = {
+                                    'id': str(tray.get('id', str(idx))),
+                                    'color': color,
+                                    'type': tray_type,
+                                    'name': tray.get('tray_sub_brands', ''),
+                                    'empty': tray_type == ''
+                                }
+                                trays.append(tray_info)
+
+                            if trays:
+                                status['ams']['trays'] = trays
+
             except Exception as e:
-                print(f"ERROR parsing AMS data: {e}")
-                import traceback
-                traceback.print_exc()
+                # Silently fail AMS parsing - don't break status updates
+                pass
 
         return status
     except Exception as e:
@@ -172,6 +194,13 @@ def on_message(client, userdata, msg):
     """MQTT message callback"""
     printer_id = userdata['printer_id']
     print(f"Printer {printer_id} received message on topic: {msg.topic}")
+
+    # Store raw message for debugging
+    try:
+        raw_mqtt_messages[printer_id] = json.loads(msg.payload)
+    except:
+        pass
+
     status = parse_bambu_status(msg.payload)
 
     if status:
@@ -306,6 +335,14 @@ def get_printer_status(printer_id):
         return jsonify(printer_status[printer_id])
     else:
         return jsonify({"error": "Printer not found"}), 404
+
+@app.route('/api/status/raw/<int:printer_id>', methods=['GET'])
+def get_raw_mqtt(printer_id):
+    """Get raw MQTT message for debugging"""
+    if printer_id in raw_mqtt_messages:
+        return jsonify(raw_mqtt_messages[printer_id])
+    else:
+        return jsonify({"error": "No MQTT data available for this printer"}), 404
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
