@@ -1,0 +1,16 @@
+{
+  "name": "Bambu Labs Farm Monitor",
+  "short_name": "Bambu Monitor",
+  "description": "Monitor multiple Bambu Lab 3D printers",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1e3c72",
+  "theme_color": "#2a5298",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}

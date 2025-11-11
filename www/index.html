@@ -3,19 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="version" content="3.3.3">
-    <title>Bambu Labs P1S Farm Monitor</title>
+    <meta name="version" content="3.3.9">
+    <title>Bambu Labs Farm Monitor</title>
+    <link rel="manifest" href="/manifest.json">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Bambu Labs P1S Farm Monitor</h1>
-            <div class="status-bar">
-                <span class="status-item">
-                    <span class="status-dot" id="status-indicator"></span>
-                    <span id="status-text">Connecting...</span>
-                </span>
+            <h1>Bambu Labs Farm Monitor</h1>
+            <div class="header-controls">
+                <div class="status-bar">
+                    <span class="status-item">
+                        <span class="status-dot" id="status-indicator"></span>
+                        <span id="status-text">Connecting...</span>
+                    </span>
+                </div>
+                <div class="layout-controls">
+                    <span class="layout-label">Layout:</span>
+                    <button onclick="applyLayout('auto')" class="layout-btn" data-layout="auto" title="Auto Grid">
+                        <div class="layout-icon auto-icon">
+                            <div class="icon-grid">
+                                <span></span><span></span>
+                                <span></span><span></span>
+                            </div>
+                        </div>
+                    </button>
+                    <button onclick="applyLayout('1x1')" class="layout-btn" data-layout="1x1" title="1 Column">
+                        <div class="layout-icon single-icon">
+                            <div class="icon-grid">
+                                <span></span>
+                            </div>
+                        </div>
+                    </button>
+                    <button onclick="applyLayout('2x1')" class="layout-btn" data-layout="2x1" title="2 Columns">
+                        <div class="layout-icon two-col-icon">
+                            <div class="icon-grid">
+                                <span></span><span></span>
+                            </div>
+                        </div>
+                    </button>
+                    <button onclick="applyLayout('2x2')" class="layout-btn" data-layout="2x2" title="2x2 Grid">
+                        <div class="layout-icon grid-2x2-icon">
+                            <div class="icon-grid">
+                                <span></span><span></span>
+                                <span></span><span></span>
+                            </div>
+                        </div>
+                    </button>
+                    <button onclick="applyLayout('3x1')" class="layout-btn" data-layout="3x1" title="3 Columns">
+                        <div class="layout-icon three-col-icon">
+                            <div class="icon-grid">
+                                <span></span><span></span><span></span>
+                            </div>
+                        </div>
+                    </button>
+                    <button onclick="applyLayout('4x1')" class="layout-btn" data-layout="4x1" title="4 Columns">
+                        <div class="layout-icon four-col-icon">
+                            <div class="icon-grid">
+                                <span></span><span></span><span></span><span></span>
+                            </div>
+                        </div>
+                    </button>
+                    <button onclick="resetLayout()" class="reset-btn" title="Reset to default">🔄</button>
+                </div>
                 <button onclick="window.location.href='/settings.html'" class="settings-btn" title="Settings">⚙️</button>
             </div>
         </header>
@@ -25,7 +76,7 @@
         </main>
 
         <footer>
-            <p>Powered by go2rtc • v3.3.3</p>
+            <p>Powered by go2rtc • v3.3.9</p>
         </footer>
     </div>
 

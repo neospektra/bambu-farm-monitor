@@ -84,6 +84,9 @@ async function initializePrinters() {
     // Make cards resizable
     makeCardsResizable();
 
+    // Load saved layout preference
+    loadLayoutPreference();
+
     // Update status indicator
     setTimeout(() => {
         const statusIndicator = document.getElementById('status-indicator');
@@ -134,6 +137,71 @@ function makeCardsResizable() {
             document.removeEventListener('mouseup', stopResize);
         }
     });
+}
+
+// Apply layout to printer grid
+function applyLayout(layoutType) {
+    const grid = document.getElementById('printers-grid');
+    if (!grid) {
+        console.error('Grid container not found');
+        return;
+    }
+
+    console.log('Applying layout:', layoutType);
+    console.log('Grid classes before:', grid.className);
+
+    // Remove all layout classes
+    grid.classList.remove('layout-auto', 'layout-1x1', 'layout-2x1', 'layout-2x2', 'layout-3x1', 'layout-4x1');
+
+    // Apply new layout class
+    grid.classList.add(`layout-${layoutType}`);
+
+    console.log('Grid classes after:', grid.className);
+
+    // Force a reflow
+    void grid.offsetHeight;
+
+    // Reset all card sizes and positions
+    const cards = document.querySelectorAll('.camera-card');
+    cards.forEach(card => {
+        card.style.width = '';
+        card.style.height = '';
+        card.style.position = '';
+        card.style.left = '';
+        card.style.top = '';
+    });
+
+    // Update active button state
+    const buttons = document.querySelectorAll('.layout-btn');
+    buttons.forEach(btn => {
+        if (btn.getAttribute('data-layout') === layoutType) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+
+    // Save preference
+    localStorage.setItem('preferred-layout', layoutType);
+
+    // Debug: log computed style
+    const computedStyle = window.getComputedStyle(grid);
+    console.log('Grid display:', computedStyle.display);
+    console.log('Grid template columns:', computedStyle.gridTemplateColumns);
+    console.log('Layout applied successfully:', layoutType);
+}
+
+// Reset layout to default
+function resetLayout() {
+    console.log('Resetting layout to auto');
+    applyLayout('auto');
+}
+
+// Load saved layout preference
+function loadLayoutPreference() {
+    const savedLayout = localStorage.getItem('preferred-layout') || 'auto';
+    console.log('Loading saved layout preference:', savedLayout);
+    applyLayout(savedLayout);
 }
 
 // Fullscreen toggle function

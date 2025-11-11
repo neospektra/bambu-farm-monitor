@@ -2,23 +2,39 @@
 
 A comprehensive web-based monitoring solution for multiple Bambu Lab 3D printers. Monitor your entire print farm from a single dashboard with real-time video streams and MQTT status updates.
 
-![Version](https://img.shields.io/badge/version-3.3.0-blue.svg)
+![Version](https://img.shields.io/badge/version-3.3.9-blue.svg)
 ![Docker Pulls](https://img.shields.io/docker/pulls/neospektra/bambu-farm-monitor)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 ## ✨ Features
 
-- 🎥 **Real-time Video Streams** - Live camera feeds from all your Bambu Lab printers using WebRTC
+### Video & Streaming
+- 🎥 **Real-time Video Streams** - Live camera feeds from all your Bambu Lab printers using WebRTC via go2rtc
+- 📐 **Resizable Windows** - Customize printer window sizes to your preference with drag handles
+- 🖼️ **Layout Options** - Choose from multiple grid layouts (1 column, 2x2, 2 columns, 3 columns, 4 columns)
+- 🎯 **Visual Layout Selector** - Icon-based layout buttons with active state highlighting
+- 🔄 **Layout Persistence** - Your preferred layout is saved and restored on page reload
+
+### Status & Monitoring
 - 📊 **MQTT Status Monitoring** - Real-time print progress, temperatures, layer info, and time remaining
-- 🎨 **AMS Color Display** - Visual display of loaded filament colors and active tray indicator
+- 🎨 **AMS Color Display** - Visual display of loaded filament colors with active tray indicator
+- 💧 **AMS Humidity** - Shows humidity percentage for AMS units
+- 🌡️ **Temperature Tracking** - Real-time nozzle and bed temperatures with target values
+- ⏱️ **Print Progress** - Live progress bar with layer count and time remaining
+
+### Configuration & Management
 - ⚡ **Dynamic Printer Management** - Add or remove printers on the fly (no restart required)
-- 📐 **Resizable Windows** - Customize printer window sizes to your preference
 - 💾 **Backup & Restore** - Export and import printer configurations for easy backup or migration
 - 🎯 **Setup Wizard** - Easy first-run configuration with optional config file import
 - 🔄 **Auto-reconnect** - Automatic MQTT reconnection after configuration changes
-- 📱 **Responsive Design** - Works on desktop, tablet, and mobile devices
+- 🧪 **Test Connection** - Verify MQTT connectivity before saving
+
+### Deployment & Platform
 - 🐳 **Single Container** - All-in-one Docker container for easy deployment
 - 🔧 **No External Dependencies** - Fully self-contained with bundled assets
+- 📱 **Responsive Design** - Works on desktop, tablet, and mobile devices
+- 🏢 **NAS Compatible** - Tested on QNAP, Synology, Unraid with Docker/Podman
+- 🌐 **Generic Branding** - Works with all Bambu Lab printer models (P1S, X1C, A1, etc.)
 
 ## 🚀 Quick Start
 
@@ -314,7 +330,56 @@ Areas that need help:
 
 ## 📋 Changelog
 
-### v3.3.0 (Latest)
+### v3.3.9 (Latest)
+- ✅ Added nginx sub_filter to replace go2rtc's hardcoded GitHub manifest URL with local copy
+- ✅ Proxied content now references /manifest.json instead of external GitHub URL
+- ✅ Eliminates CORS errors from go2rtc stream viewer
+
+### v3.3.8
+- ✅ Fixed nginx config to serve manifest.json from /var/www/html
+- ✅ Added manifest.json to nginx static file whitelist
+
+### v3.3.7
+- ✅ Fixed CSS layout grid with !important flags to ensure styles apply
+- ✅ Added manifest.json to resolve CORS errors from go2rtc stream
+- ✅ Enhanced debug logging to show computed grid styles
+- ✅ Force browser reflow after layout change
+- ✅ Set default grid-template-columns on base container
+
+### v3.3.6
+- ✅ Replaced dropdown with visual icon buttons for layout selection
+- ✅ Active layout highlighted with green glow effect
+- ✅ Fixed layout switching functionality with proper class application
+- ✅ Added console logging for debugging layout changes
+- ✅ Improved mobile responsive design for layout controls
+
+### v3.3.5
+- ✅ Layout selector with multiple grid options (1 column, 2x2, 2 columns, 3 columns, 4 columns)
+- ✅ Reset layout button to restore default view
+- ✅ Layout preference saved to browser localStorage
+- ✅ Removed overlapping window drag feature (replaced with clean grid layouts)
+- ✅ Responsive layout controls that adapt to screen size
+
+### v3.3.4
+- ✅ Draggable printer windows (drag by header to reposition)
+- ✅ Flexbox layout for auto-adjusting printer cards when resized
+- ✅ Generic branding (removed P1S-specific references)
+- ✅ Fixed AMS humidity display
+
+### v3.3.3
+- ✅ Fixed AMS color parsing to use correct MQTT structure
+- ✅ Added AMS humidity percentage display with water droplet icon
+- ✅ Fixed resize handle placement for better usability
+
+### v3.3.2
+- ✅ Added debug endpoint for raw MQTT data inspection
+- ✅ Enhanced AMS parsing with multiple fallback attempts
+
+### v3.3.1
+- ✅ Fixed resize handle positioning
+- ✅ Added debug logging for AMS data
+
+### v3.3.0
 - ✅ AMS filament color display with active tray indicator
 - ✅ Backup & restore configuration (export/import JSON)
 - ✅ Import configuration option in setup wizard

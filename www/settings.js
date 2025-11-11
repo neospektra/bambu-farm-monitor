@@ -37,7 +37,7 @@ function renderPrinterForms() {
                     <input type="text"
                            id="name-${printer.id}"
                            value="${printer.name}"
-                           placeholder="e.g., Farm P1S AMS-1">
+                           placeholder="e.g., Farm Printer #1">
                 </div>
                 <div class="form-row">
                     <div class="form-group">
