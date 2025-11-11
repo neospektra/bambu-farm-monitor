@@ -47,11 +47,11 @@ function createPrinterCard(printer) {
                     src="/stream.html?src=printer${printer.id}"
                     allowfullscreen></iframe>
             <button class="fullscreen-btn" onclick="toggleFullscreen('container-${printer.id}')" title="Fullscreen">⛶</button>
-            <div class="resize-handle"></div>
         </div>
         <div class="printer-status" id="status-${printer.id}">
             <div class="status-loading">Loading status...</div>
         </div>
+        <div class="resize-handle"></div>
     `;
     return card;
 }

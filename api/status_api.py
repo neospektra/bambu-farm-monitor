@@ -91,30 +91,54 @@ def parse_bambu_status(payload):
             status['fan_speed'] = print_data['big_fan1_speed']
 
         # Parse AMS (Automatic Material System) data
+        # Bambu MQTT structure: data['ams']['ams'][0]['tray'] array
         if 'ams' in data:
-            ams_data = data['ams']
-            if 'ams' in ams_data and len(ams_data['ams']) > 0:
-                status['ams']['has_ams'] = True
-                # Get first AMS unit (most printers have only one)
-                ams_unit = ams_data['ams'][0]
+            try:
+                ams_data = data['ams']
+                print(f"DEBUG: AMS data keys: {ams_data.keys() if isinstance(ams_data, dict) else 'not a dict'}")
 
-                # Get active tray info
-                if 'tray_now' in ams_unit:
-                    status['ams']['active_tray'] = ams_unit['tray_now']
+                if 'ams' in ams_data and isinstance(ams_data['ams'], list) and len(ams_data['ams']) > 0:
+                    status['ams']['has_ams'] = True
+                    # Get first AMS unit (most printers have only one)
+                    ams_unit = ams_data['ams'][0]
+                    print(f"DEBUG: AMS unit keys: {ams_unit.keys() if isinstance(ams_unit, dict) else 'not a dict'}")
 
-                # Parse tray information
-                if 'tray' in ams_unit:
-                    trays = []
-                    for tray in ams_unit['tray']:
-                        tray_info = {
-                            'id': tray.get('id', ''),
-                            'color': tray.get('tray_color', 'CCCCCC'),  # Default gray if no color
-                            'type': tray.get('tray_type', ''),
-                            'name': tray.get('tray_sub_brands', ''),
-                            'empty': tray.get('tray_type', '') == ''  # Empty if no type
-                        }
-                        trays.append(tray_info)
-                    status['ams']['trays'] = trays
+                    # Get active tray info - try different field names
+                    if 'tray_now' in ams_unit:
+                        status['ams']['active_tray'] = str(ams_unit['tray_now'])
+                    elif 'tray_tar' in ams_unit:
+                        status['ams']['active_tray'] = str(ams_unit['tray_tar'])
+
+                    print(f"DEBUG: Active tray: {status['ams']['active_tray']}")
+
+                    # Parse tray information
+                    if 'tray' in ams_unit and isinstance(ams_unit['tray'], list):
+                        trays = []
+                        for idx, tray in enumerate(ams_unit['tray']):
+                            if not isinstance(tray, dict):
+                                continue
+
+                            # Bambu uses 'tray_color' field as RRGGBBAA hex string
+                            color = tray.get('tray_color', 'CCCCCC')
+                            if isinstance(color, str) and len(color) >= 6:
+                                color = color[:6]  # Strip alpha channel if present
+
+                            tray_info = {
+                                'id': str(tray.get('id', str(idx))),
+                                'color': color,
+                                'type': tray.get('tray_type', ''),
+                                'name': tray.get('tray_sub_brands', ''),
+                                'empty': tray.get('tray_type', '') == ''  # Empty if no type
+                            }
+                            trays.append(tray_info)
+                            print(f"DEBUG: Tray {idx}: color={color}, type={tray_info['type']}, empty={tray_info['empty']}")
+
+                        status['ams']['trays'] = trays
+                        print(f"DEBUG: Total trays parsed: {len(trays)}")
+            except Exception as e:
+                print(f"ERROR parsing AMS data: {e}")
+                import traceback
+                traceback.print_exc()
 
         return status
     except Exception as e:
@@ -327,7 +351,17 @@ def test_status():
             "print_total_layers": 185,
             "print_time_remaining": 135,
             "print_file": "/data/test_model_benchy.gcode",
-            "print_status": "RUNNING"
+            "print_status": "RUNNING",
+            "ams": {
+                "has_ams": True,
+                "trays": [
+                    {"id": "0", "color": "FF0000", "type": "PLA", "name": "Red PLA", "empty": False},
+                    {"id": "1", "color": "00FF00", "type": "PETG", "name": "Green PETG", "empty": False},
+                    {"id": "2", "color": "0000FF", "type": "ABS", "name": "Blue ABS", "empty": False},
+                    {"id": "3", "color": "FFFF00", "type": "TPU", "name": "Yellow TPU", "empty": False}
+                ],
+                "active_tray": "1"
+            }
         },
         "2": {
             "connected": True,
@@ -343,7 +377,17 @@ def test_status():
             "print_total_layers": 0,
             "print_time_remaining": 0,
             "print_file": "",
-            "print_status": "IDLE"
+            "print_status": "IDLE",
+            "ams": {
+                "has_ams": True,
+                "trays": [
+                    {"id": "0", "color": "FFFFFF", "type": "PLA", "name": "White PLA", "empty": False},
+                    {"id": "1", "color": "000000", "type": "PETG", "name": "Black PETG", "empty": False},
+                    {"id": "2", "color": "CCCCCC", "type": "", "name": "", "empty": True},
+                    {"id": "3", "color": "CCCCCC", "type": "", "name": "", "empty": True}
+                ],
+                "active_tray": None
+            }
         },
         "3": {
             "connected": True,
