@@ -1,0 +1,26 @@
+streams:
+  # Printer 1: Farm P1S AMS-1
+  printer1: "exec:/app/BambuP1SCam start_stream_local -s ${PRINTER1_IP} -a ${PRINTER1_CODE}#video=h264#hardware"
+
+  # Printer 2: Farm P1S AMS-2
+  printer2: "exec:/app/BambuP1SCam start_stream_local -s ${PRINTER2_IP} -a ${PRINTER2_CODE}#video=h264#hardware"
+
+  # Printer 3: Farm P1S AMS-3A
+  printer3: "exec:/app/BambuP1SCam start_stream_local -s ${PRINTER3_IP} -a ${PRINTER3_CODE}#video=h264#hardware"
+
+  # Printer 4: Farm P1S AMS-4
+  printer4: "exec:/app/BambuP1SCam start_stream_local -s ${PRINTER4_IP} -a ${PRINTER4_CODE}#video=h264#hardware"
+
+# API settings
+api:
+  listen: ":1984"
+  origin: "*"
+
+# WebRTC settings
+webrtc:
+  listen: ":8555"
+
+# Log settings
+log:
+  level: info
+  format: text

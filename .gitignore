@@ -1,0 +1,41 @@
+# Configuration files with sensitive data
+config/printers.json
+
+# Environment variables
+.env
+
+# Build artifacts
+*.tar.gz
+*.tar
+build_assets/
+
+# Logs
+logs/
+*.log
+/var/log/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Backup files
+*.bak
+*.backup

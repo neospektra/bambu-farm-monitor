@@ -1,0 +1,286 @@
+.settings-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.settings-info {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    backdrop-filter: blur(10px);
+}
+
+.settings-info p {
+    margin: 0;
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+#printers-config {
+    display: grid;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.printer-config-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 25px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.printer-config-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    gap: 15px;
+}
+
+.printer-config-header h3 {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.printer-number {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: white;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.form-group input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 15px;
+}
+
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+.actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.status-message {
+    margin-top: 20px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.status-message.hidden {
+    display: none;
+}
+
+.status-message.success {
+    background: rgba(76, 175, 80, 0.2);
+    border: 2px solid rgba(76, 175, 80, 0.5);
+    color: #4caf50;
+}
+
+.status-message.error {
+    background: rgba(244, 67, 54, 0.2);
+    border: 2px solid rgba(244, 67, 54, 0.5);
+    color: #f44336;
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.form-group label .optional {
+    font-weight: 400;
+    font-size: 0.85rem;
+    opacity: 0.7;
+}
+
+.form-actions {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.btn-test {
+    padding: 10px 20px;
+    background: rgba(33, 150, 243, 0.3);
+    color: white;
+    border: 2px solid rgba(33, 150, 243, 0.5);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.btn-test:hover {
+    background: rgba(33, 150, 243, 0.5);
+    border-color: rgba(33, 150, 243, 0.7);
+    transform: translateY(-1px);
+}
+
+.mqtt-test-result {
+    flex: 1;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+.mqtt-test-result .testing {
+    color: #2196f3;
+    font-weight: 600;
+}
+
+.mqtt-success {
+    background: rgba(76, 175, 80, 0.2);
+    border: 2px solid rgba(76, 175, 80, 0.5);
+    color: #4caf50;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.mqtt-success strong {
+    color: #66bb6a;
+}
+
+.mqtt-error {
+    background: rgba(244, 67, 54, 0.2);
+    border: 2px solid rgba(244, 67, 54, 0.5);
+    color: #f44336;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.mqtt-error strong {
+    color: #ef5350;
+}
+
+.mqtt-error small {
+    opacity: 0.8;
+}
+
+.btn-delete {
+    padding: 8px 16px;
+    background: rgba(244, 67, 54, 0.3);
+    color: white;
+    border: 2px solid rgba(244, 67, 54, 0.5);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-delete:hover {
+    background: rgba(244, 67, 54, 0.5);
+    border-color: rgba(244, 67, 54, 0.7);
+    transform: translateY(-1px);
+}
+
+.add-printer-container {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.btn-add {
+    padding: 15px 40px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-add:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}

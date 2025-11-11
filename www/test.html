@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Bambu Labs Farm Monitor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧪 Test Mode - Status Overlay Demo</h1>
+            <div class="status-bar">
+                <span class="status-item">
+                    <span class="status-dot connected"></span>
+                    <span>Using Fake Data</span>
+                </span>
+                <button onclick="window.location.href='/'" class="settings-btn">← Back</button>
+            </div>
+        </header>
+
+        <main class="grid-container">
+            <!-- Printer 1 - PRINTING -->
+            <div class="camera-card">
+                <div class="camera-header">
+                    <h2>Printer 1 - PRINTING (65%)</h2>
+                    <span class="stream-status connected">●</span>
+                </div>
+                <div class="video-container" id="container-1">
+                    <iframe class="camera-video" src="/stream.html?src=printer1" allowfullscreen></iframe>
+                    <button class="fullscreen-btn" onclick="toggleFullscreen('container-1')" title="Fullscreen">⛶</button>
+                    <div class="status-overlay active" id="status-overlay-1">
+                        <div class="print-info">
+                            <div class="print-file">test_model_benchy.gcode</div>
+                            <div class="print-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 65%"></div>
+                                </div>
+                                <div class="progress-text">65%</div>
+                            </div>
+                            <div class="print-details">
+                                <div class="detail-item">
+                                    <span class="label">Layer:</span>
+                                    <span class="value">120/185</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="label">Remaining:</span>
+                                    <span class="value">2h 15m</span>
+                                </div>
+                            </div>
+                            <div class="temp-info">
+                                <div class="temp-item">
+                                    <span class="temp-icon">🔥</span>
+                                    <span class="temp-value">210°C / 210°C</span>
+                                </div>
+                                <div class="temp-item">
+                                    <span class="temp-icon">🛏️</span>
+                                    <span class="temp-value">60°C / 60°C</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Printer 2 - IDLE -->
+            <div class="camera-card">
+                <div class="camera-header">
+                    <h2>Printer 2 - IDLE</h2>
+                    <span class="stream-status connected">●</span>
+                </div>
+                <div class="video-container" id="container-2">
+                    <iframe class="camera-video" src="/stream.html?src=printer2" allowfullscreen></iframe>
+                    <button class="fullscreen-btn" onclick="toggleFullscreen('container-2')" title="Fullscreen">⛶</button>
+                    <div class="status-overlay" id="status-overlay-2"></div>
+                </div>
+            </div>
+
+            <!-- Printer 3 - PRINTING -->
+            <div class="camera-card">
+                <div class="camera-header">
+                    <h2>Printer 3 - PRINTING (92%)</h2>
+                    <span class="stream-status connected">●</span>
+                </div>
+                <div class="video-container" id="container-3">
+                    <iframe class="camera-video" src="/stream.html?src=printer3" allowfullscreen></iframe>
+                    <button class="fullscreen-btn" onclick="toggleFullscreen('container-3')" title="Fullscreen">⛶</button>
+                    <div class="status-overlay active" id="status-overlay-3">
+                        <div class="print-info">
+                            <div class="print-file">gear_assembly_v2.gcode</div>
+                            <div class="print-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 92%"></div>
+                                </div>
+                                <div class="progress-text">92%</div>
+                            </div>
+                            <div class="print-details">
+                                <div class="detail-item">
+                                    <span class="label">Layer:</span>
+                                    <span class="value">275/300</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="label">Remaining:</span>
+                                    <span class="value">45m</span>
+                                </div>
+                            </div>
+                            <div class="temp-info">
+                                <div class="temp-item">
+                                    <span class="temp-icon">🔥</span>
+                                    <span class="temp-value">220°C / 220°C</span>
+                                </div>
+                                <div class="temp-item">
+                                    <span class="temp-icon">🛏️</span>
+                                    <span class="temp-value">65°C / 65°C</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Printer 4 - IDLE -->
+            <div class="camera-card">
+                <div class="camera-header">
+                    <h2>Printer 4 - IDLE</h2>
+                    <span class="stream-status connected">●</span>
+                </div>
+                <div class="video-container" id="container-4">
+                    <iframe class="camera-video" src="/stream.html?src=printer4" allowfullscreen></iframe>
+                    <button class="fullscreen-btn" onclick="toggleFullscreen('container-4')" title="Fullscreen">⛶</button>
+                    <div class="status-overlay" id="status-overlay-4"></div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>🧪 Test Mode - Fake Data Demo</p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleFullscreen(containerId) {
+            const container = document.getElementById(containerId);
+            if (!document.fullscreenElement) {
+                container.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="version" content="3.2.0">
+    <title>Bambu Labs P1S Farm Monitor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Bambu Labs P1S Farm Monitor</h1>
+            <div class="status-bar">
+                <span class="status-item">
+                    <span class="status-dot" id="status-indicator"></span>
+                    <span id="status-text">Connecting...</span>
+                </span>
+                <button onclick="window.location.href='/settings.html'" class="settings-btn" title="Settings">⚙️</button>
+            </div>
+        </header>
+
+        <main class="grid-container" id="printers-grid">
+            <!-- Printer cards will be dynamically generated here -->
+        </main>
+
+        <footer>
+            <p>Powered by go2rtc • v3.2.0</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

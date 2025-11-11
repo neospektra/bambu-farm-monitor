@@ -1,0 +1,32 @@
+{
+  "printers": [
+    {
+      "id": 1,
+      "name": "Printer 1",
+      "ip": "192.168.1.100",
+      "access_code": "12345678",
+      "serial": "01P00A411800001"
+    },
+    {
+      "id": 2,
+      "name": "Printer 2",
+      "ip": "192.168.1.101",
+      "access_code": "87654321",
+      "serial": "01P00A411800002"
+    },
+    {
+      "id": 3,
+      "name": "Printer 3",
+      "ip": "192.168.1.102",
+      "access_code": "11112222",
+      "serial": "01P00A411800003"
+    },
+    {
+      "id": 4,
+      "name": "Printer 4",
+      "ip": "192.168.1.103",
+      "access_code": "33334444",
+      "serial": "01P00A411800004"
+    }
+  ]
+}

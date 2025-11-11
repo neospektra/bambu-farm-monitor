@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Bambu Labs Farm Monitor</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚙️ Printer Configuration</h1>
+            <div class="header-actions">
+                <button onclick="window.location.href='/'" class="btn btn-secondary">← Back to Cameras</button>
+            </div>
+        </header>
+
+        <main class="settings-container">
+            <div class="settings-info">
+                <p>Update printer IP addresses and access codes. Changes will be applied immediately and streams will reconnect.</p>
+            </div>
+
+            <div id="printers-config">
+                <!-- Printer config forms will be loaded here -->
+            </div>
+
+            <div class="actions">
+                <button onclick="saveAll()" class="btn btn-primary">💾 Save All Changes</button>
+                <button onclick="reloadConfig()" class="btn btn-secondary">🔄 Reload Configuration</button>
+            </div>
+
+            <div id="status-message" class="status-message hidden"></div>
+        </main>
+
+        <footer>
+            <p>Bambu Labs Farm Monitor v2.0</p>
+        </footer>
+    </div>
+
+    <script src="settings.js"></script>
+</body>
+</html>

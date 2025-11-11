@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup Wizard - Bambu Farm Monitor</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .setup-container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .setup-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .setup-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .setup-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+
+        .step.active {
+            opacity: 1;
+        }
+
+        .step.completed {
+            opacity: 0.7;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .step.active .step-number {
+            background: linear-gradient(135deg, #4caf50, #66bb6a);
+        }
+
+        .step.completed .step-number::before {
+            content: "✓";
+        }
+
+        .wizard-content {
+            min-height: 400px;
+        }
+
+        .wizard-step {
+            display: none;
+        }
+
+        .wizard-step.active {
+            display: block;
+        }
+
+        .printer-count-selector {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .count-option {
+            padding: 30px 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .count-option:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .count-option.selected {
+            background: linear-gradient(135deg, #4caf50, #66bb6a);
+            border-color: #66bb6a;
+        }
+
+        .count-number {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .printer-forms {
+            display: grid;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .printer-form-card {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .printer-form-card h3 {
+            margin-bottom: 20px;
+            color: #66bb6a;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #66bb6a;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            opacity: 0.7;
+            font-size: 0.85rem;
+        }
+
+        .wizard-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4caf50, #66bb6a);
+            color: white;
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .help-text {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #66bb6a;
+            margin-bottom: 30px;
+        }
+
+        .help-text h4 {
+            margin-bottom: 10px;
+            color: #66bb6a;
+        }
+
+        .help-text ul {
+            margin-left: 20px;
+        }
+
+        .help-text li {
+            margin-bottom: 5px;
+        }
+
+        .completion-message {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .completion-message svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+        }
+
+        .completion-message h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: #66bb6a;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="setup-container">
+        <div class="setup-header">
+            <h1>Welcome to Bambu Farm Monitor</h1>
+            <p>Let's get your printers configured</p>
+        </div>
+
+        <div class="step-indicator">
+            <div class="step active" data-step="1">
+                <div class="step-number">1</div>
+                <span>Printers</span>
+            </div>
+            <div class="step" data-step="2">
+                <div class="step-number">2</div>
+                <span>Configure</span>
+            </div>
+            <div class="step" data-step="3">
+                <div class="step-number">3</div>
+                <span>Complete</span>
+            </div>
+        </div>
+
+        <div class="wizard-content">
+            <!-- Step 1: Select number of printers -->
+            <div class="wizard-step active" data-step="1">
+                <div class="help-text">
+                    <h4>How many printers do you have?</h4>
+                    <p>Select the number of Bambu Labs printers you want to monitor (1-4)</p>
+                </div>
+
+                <div class="printer-count-selector">
+                    <div class="count-option" data-count="1">
+                        <div class="count-number">1</div>
+                        <div>Printer</div>
+                    </div>
+                    <div class="count-option" data-count="2">
+                        <div class="count-number">2</div>
+                        <div>Printers</div>
+                    </div>
+                    <div class="count-option" data-count="3">
+                        <div class="count-number">3</div>
+                        <div>Printers</div>
+                    </div>
+                    <div class="count-option selected" data-count="4">
+                        <div class="count-number">4</div>
+                        <div>Printers</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Configure printers -->
+            <div class="wizard-step" data-step="2">
+                <div class="help-text">
+                    <h4>Finding Your Printer Information</h4>
+                    <ul>
+                        <li><strong>IP Address:</strong> Check your printer's screen or router's DHCP table</li>
+                        <li><strong>Access Code:</strong> Printer Settings → Network → LAN Mode MQTT (8-digit code)</li>
+                        <li><strong>Serial Number:</strong> Printer Settings → Device → Device Info (starts with 01P)</li>
+                    </ul>
+                </div>
+
+                <div class="printer-forms" id="printer-forms"></div>
+            </div>
+
+            <!-- Step 3: Completion -->
+            <div class="wizard-step" data-step="3">
+                <div class="completion-message">
+                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="45" stroke="#66bb6a" stroke-width="5"/>
+                        <path d="M30 50 L45 65 L70 35" stroke="#66bb6a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <h2>Setup Complete!</h2>
+                    <p>Your printers have been configured successfully.</p>
+                    <p>Redirecting to dashboard...</p>
+                    <div class="spinner" style="margin-top: 20px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="wizard-actions">
+            <button class="btn btn-secondary" id="btn-back" style="visibility: hidden;">Back</button>
+            <button class="btn btn-primary" id="btn-next">Next</button>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        let printerCount = 4;
+        const maxSteps = 3;
+
+        // Step navigation
+        function updateStepIndicator() {
+            document.querySelectorAll('.step').forEach(step => {
+                const stepNum = parseInt(step.dataset.step);
+                step.classList.remove('active', 'completed');
+                if (stepNum < currentStep) {
+                    step.classList.add('completed');
+                } else if (stepNum === currentStep) {
+                    step.classList.add('active');
+                }
+            });
+
+            document.querySelectorAll('.wizard-step').forEach(step => {
+                step.classList.remove('active');
+            });
+            document.querySelector(`.wizard-step[data-step="${currentStep}"]`).classList.add('active');
+
+            // Update button visibility
+            document.getElementById('btn-back').style.visibility = currentStep > 1 && currentStep < maxSteps ? 'visible' : 'hidden';
+            document.getElementById('btn-next').textContent = currentStep === 2 ? 'Complete Setup' : 'Next';
+            document.getElementById('btn-next').style.display = currentStep === maxSteps ? 'none' : 'block';
+        }
+
+        // Printer count selection
+        document.querySelectorAll('.count-option').forEach(option => {
+            option.addEventListener('click', () => {
+                document.querySelectorAll('.count-option').forEach(o => o.classList.remove('selected'));
+                option.classList.add('selected');
+                printerCount = parseInt(option.dataset.count);
+            });
+        });
+
+        // Generate printer forms
+        function generatePrinterForms() {
+            const container = document.getElementById('printer-forms');
+            container.innerHTML = '';
+
+            for (let i = 1; i <= printerCount; i++) {
+                const formCard = document.createElement('div');
+                formCard.className = 'printer-form-card';
+                formCard.innerHTML = `
+                    <h3>Printer ${i}</h3>
+                    <div class="form-group">
+                        <label>Printer Name</label>
+                        <input type="text" id="name-${i}" value="Printer ${i}" placeholder="My Printer">
+                        <small>Friendly name for this printer</small>
+                    </div>
+                    <div class="form-group">
+                        <label>IP Address *</label>
+                        <input type="text" id="ip-${i}" placeholder="192.168.1.100" required>
+                        <small>Local network IP address of the printer</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Access Code *</label>
+                        <input type="text" id="code-${i}" placeholder="12345678" maxlength="8" required>
+                        <small>8-digit MQTT access code from printer settings</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Serial Number (Optional)</label>
+                        <input type="text" id="serial-${i}" placeholder="01P00A411800001">
+                        <small>Required for real-time status monitoring</small>
+                    </div>
+                `;
+                container.appendChild(formCard);
+            }
+        }
+
+        // Collect printer data
+        function collectPrinterData() {
+            const printers = [];
+            for (let i = 1; i <= printerCount; i++) {
+                const name = document.getElementById(`name-${i}`).value || `Printer ${i}`;
+                const ip = document.getElementById(`ip-${i}`).value.trim();
+                const code = document.getElementById(`code-${i}`).value.trim();
+                const serial = document.getElementById(`serial-${i}`).value.trim();
+
+                if (!ip || !code) {
+                    alert(`Please fill in IP and Access Code for Printer ${i}`);
+                    return null;
+                }
+
+                printers.push({ name, ip, access_code: code, serial });
+            }
+            return printers;
+        }
+
+        // Save configuration
+        async function saveConfiguration() {
+            const printers = collectPrinterData();
+            if (!printers) return false;
+
+            try {
+                const response = await fetch('/api/config/printers/bulk', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ printers })
+                });
+
+                if (!response.ok) throw new Error('Failed to save configuration');
+
+                // Reconnect MQTT after saving configuration
+                try {
+                    await fetch('/api/status/reconnect', { method: 'POST' });
+                } catch (mqttError) {
+                    console.error('Error reconnecting MQTT:', mqttError);
+                    // Don't fail setup if MQTT reconnect fails
+                }
+
+                return true;
+            } catch (error) {
+                console.error('Error saving configuration:', error);
+                alert('Failed to save configuration. Please try again.');
+                return false;
+            }
+        }
+
+        // Button handlers
+        document.getElementById('btn-back').addEventListener('click', () => {
+            if (currentStep > 1) {
+                currentStep--;
+                updateStepIndicator();
+            }
+        });
+
+        document.getElementById('btn-next').addEventListener('click', async () => {
+            if (currentStep === 1) {
+                // Generate forms for selected number of printers
+                generatePrinterForms();
+                currentStep++;
+                updateStepIndicator();
+            } else if (currentStep === 2) {
+                // Save configuration and proceed
+                if (await saveConfiguration()) {
+                    currentStep++;
+                    updateStepIndicator();
+
+                    // Redirect to dashboard after 3 seconds
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 3000);
+                }
+            }
+        });
+
+        // Initialize
+        updateStepIndicator();
+    </script>
+</body>
+</html>
