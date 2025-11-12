@@ -1,0 +1,23 @@
+# Windows Native Build Requirements
+
+# Core API dependencies (from api/requirements.txt)
+Flask==3.0.0
+flask-cors==4.0.0
+paho-mqtt==1.6.1
+
+# Web server
+waitress==3.0.0
+requests==2.31.0
+
+# System tray application
+pystray==0.19.5
+Pillow==10.2.0
+
+# Windows service support
+pywin32==306
+
+# Build tools
+PyInstaller==6.3.0
+
+# Additional utilities
+psutil==5.9.8

@@ -1,0 +1,15 @@
+# Icon Placeholder
+
+To build the installer with a custom icon:
+
+1. Create or obtain an .ico file with multiple sizes (16x16, 32x32, 48x48, 256x256)
+2. Name it `icon.ico`
+3. Place it in this directory (windows/)
+4. The build script will automatically use it
+
+You can create an .ico file from an image using:
+- Online tools: https://convertio.co/png-ico/
+- Image editing software (GIMP, Photoshop, etc.)
+- Command line: ImageMagick
+
+For now, the installer will use the default Inno Setup icon.

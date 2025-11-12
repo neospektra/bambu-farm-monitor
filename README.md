@@ -67,6 +67,21 @@ The script will:
 
 **See the [Windows Installation Guide](docs/wiki/Windows-Installation.md) for detailed instructions.**
 
+### Windows Native Application (No Docker Required) 💻
+
+**NEW!** For Windows users who prefer not to use Docker, we now offer a **native Windows application** with a professional installer:
+
+- ✅ **No Docker needed** - Runs completely standalone
+- ✅ **System tray application** - Easy access and control
+- ✅ **Professional installer** - MSI-style installation with Inno Setup
+- ✅ **Auto-start with Windows** - Optional
+- ✅ **Lower resource usage** - No container overhead
+- ✅ **Proper uninstaller** - Clean removal
+
+**See the [Windows Native Build Guide](windows/README.md) for building and installation instructions.**
+
+_Note: The native Windows version is currently in beta. Installers will be available in future releases._
+
 ### Installation
 
 #### Option 1: Docker Run (Recommended for Testing)
@@ -195,6 +210,19 @@ docker run -d \
 ## 🏢 Platform-Specific Deployment
 
 ### Windows 🪟
+
+#### Option 1: Native Windows Application (Recommended - No Docker!)
+
+**NEW!** Professional native Windows application with installer:
+
+- ✅ No Docker required
+- ✅ System tray application
+- ✅ Auto-start with Windows
+- ✅ Lower resource usage
+
+**See the [Windows Native Build Guide](windows/README.md)** for build instructions.
+
+#### Option 2: Docker-based Installation
 
 **See the comprehensive [Windows Installation Guide](docs/wiki/Windows-Installation.md)**
 
