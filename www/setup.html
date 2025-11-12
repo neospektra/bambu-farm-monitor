@@ -309,25 +309,20 @@
             <div class="wizard-step active" data-step="1">
                 <div class="help-text">
                     <h4>How many printers do you have?</h4>
-                    <p>Select the number of Bambu Labs printers you want to monitor (1-4)</p>
+                    <p>Enter the number of Bambu Labs printers you want to monitor</p>
                 </div>
 
-                <div class="printer-count-selector">
-                    <div class="count-option" data-count="1">
-                        <div class="count-number">1</div>
-                        <div>Printer</div>
-                    </div>
-                    <div class="count-option" data-count="2">
-                        <div class="count-number">2</div>
-                        <div>Printers</div>
-                    </div>
-                    <div class="count-option" data-count="3">
-                        <div class="count-number">3</div>
-                        <div>Printers</div>
-                    </div>
-                    <div class="count-option selected" data-count="4">
-                        <div class="count-number">4</div>
-                        <div>Printers</div>
+                <div style="text-align: center; margin-top: 30px;">
+                    <div style="display: inline-block; text-align: left;">
+                        <label for="printer-count-input" style="display: block; margin-bottom: 10px; font-size: 1.1rem;">Number of Printers:</label>
+                        <input type="number"
+                               id="printer-count-input"
+                               min="1"
+                               max="99"
+                               value="4"
+                               style="width: 200px; padding: 15px 20px; font-size: 1.5rem; text-align: center; background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 10px; color: white;"
+                               oninput="updatePrinterCount(this.value)">
+                        <small style="display: block; margin-top: 8px; opacity: 0.7;">You can add more later in Settings</small>
                     </div>
                 </div>
 
@@ -402,14 +397,13 @@
             document.getElementById('btn-next').style.display = currentStep === maxSteps ? 'none' : 'block';
         }
 
-        // Printer count selection
-        document.querySelectorAll('.count-option').forEach(option => {
-            option.addEventListener('click', () => {
-                document.querySelectorAll('.count-option').forEach(o => o.classList.remove('selected'));
-                option.classList.add('selected');
-                printerCount = parseInt(option.dataset.count);
-            });
-        });
+        // Update printer count from input
+        function updatePrinterCount(value) {
+            const count = parseInt(value);
+            if (count >= 1 && count <= 99) {
+                printerCount = count;
+            }
+        }
 
         // Generate printer forms
         function generatePrinterForms() {
@@ -505,6 +499,18 @@
 
         document.getElementById('btn-next').addEventListener('click', async () => {
             if (currentStep === 1) {
+                // Get printer count from input
+                const input = document.getElementById('printer-count-input');
+                const count = parseInt(input.value);
+
+                // Validate input
+                if (isNaN(count) || count < 1 || count > 99) {
+                    alert('Please enter a valid number of printers (1-99)');
+                    return;
+                }
+
+                printerCount = count;
+
                 // Generate forms for selected number of printers
                 generatePrinterForms();
                 currentStep++;

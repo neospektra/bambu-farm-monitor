@@ -260,40 +260,10 @@ function isCompleteStatus(status) {
 function mergeStatus(cached, newStatus) {
     if (!cached) return newStatus;
 
-    const merged = { ...cached };
+    const merged = { ...newStatus };
 
-    // Always update temps and connection status
-    merged.nozzle_temp = newStatus.nozzle_temp;
-    merged.bed_temp = newStatus.bed_temp;
-    merged.connected = newStatus.connected;
-
-    // Always update AMS data if present
-    if (newStatus.ams) {
-        merged.ams = newStatus.ams;
-    }
-
-    // Only update printing info if the new data is complete
-    if (newStatus.printing && newStatus.print_progress > 0 && newStatus.print_file) {
-        merged.printing = newStatus.printing;
-        merged.print_progress = newStatus.print_progress;
-        merged.print_file = newStatus.print_file;
-        merged.print_layer = newStatus.print_layer;
-        merged.print_total_layers = newStatus.print_total_layers;
-        merged.print_time_remaining = newStatus.print_time_remaining;
-        merged.nozzle_target = newStatus.nozzle_target;
-        merged.bed_target = newStatus.bed_target;
-    } else if (newStatus.print_progress === 0 && newStatus.print_file === '') {
-        // Clear printing data if truly idle
-        merged.printing = false;
-        merged.print_progress = 0;
-        merged.print_file = '';
-        merged.print_layer = 0;
-        merged.print_total_layers = 0;
-        merged.print_time_remaining = 0;
-        merged.nozzle_target = 0;
-        merged.bed_target = 0;
-    }
-
+    // Always trust the backend status since it now handles
+    // job completion and state transitions properly
     return merged;
 }
 
@@ -477,6 +447,12 @@ async function initialize() {
     // Check if setup is required
     const setupRequired = await checkSetupRequired();
     if (setupRequired) return;
+
+    // Clear any existing intervals to prevent duplicates
+    if (statusUpdateInterval) {
+        clearInterval(statusUpdateInterval);
+        statusUpdateInterval = null;
+    }
 
     // Initialize printers
     await initializePrinters();

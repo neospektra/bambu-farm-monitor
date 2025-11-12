@@ -212,6 +212,9 @@ def on_message(client, userdata, msg):
         new_has_print_data = status['print_file'] != '' and status['print_progress'] > 0
         new_is_clearly_idle = status['print_file'] == '' and status['print_progress'] == 0 and status['print_status'] == 'idle'
 
+        # Detect job completion: was printing, now not printing or idle
+        job_just_finished = current_printing and (not status['printing'] or new_is_clearly_idle)
+
         if new_has_print_data:
             # New message has complete print data, update everything
             printer_status[printer_id]['printing'] = status['printing']
@@ -224,8 +227,8 @@ def on_message(client, userdata, msg):
             printer_status[printer_id]['nozzle_target'] = status['nozzle_target']
             printer_status[printer_id]['bed_target'] = status['bed_target']
             printer_status[printer_id]['fan_speed'] = status['fan_speed']
-        elif new_is_clearly_idle and not current_printing:
-            # Was idle, still idle, update to confirm
+        elif new_is_clearly_idle or job_just_finished:
+            # Printer is idle or job just finished, clear print data
             printer_status[printer_id]['printing'] = False
             printer_status[printer_id]['print_progress'] = 0
             printer_status[printer_id]['print_file'] = ''
@@ -233,6 +236,8 @@ def on_message(client, userdata, msg):
             printer_status[printer_id]['print_total_layers'] = 0
             printer_status[printer_id]['print_time_remaining'] = 0
             printer_status[printer_id]['print_status'] = 'idle'
+            printer_status[printer_id]['nozzle_target'] = 0
+            printer_status[printer_id]['bed_target'] = 0
         # else: keep cached print data if new message doesn't have complete info
 
 def on_disconnect(client, userdata, rc):
