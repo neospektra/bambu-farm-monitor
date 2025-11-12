@@ -67,6 +67,26 @@ The script will:
 
 **See the [Windows Installation Guide](docs/wiki/Windows-Installation.md) for detailed instructions.**
 
+### macOS Automated Installation 🍎
+
+**macOS users**: We have an automated installer that makes setup super easy!
+
+```bash
+# Download and run the automated installer
+curl -O https://raw.githubusercontent.com/neospektra/bambu-farm-monitor/main/scripts/install-macos.sh
+chmod +x install-macos.sh
+./install-macos.sh
+```
+
+The script will:
+- ✅ Check and install Homebrew (if needed)
+- ✅ Check and install Docker Desktop or Podman Desktop via Homebrew
+- ✅ Download the latest image
+- ✅ Configure your printers interactively
+- ✅ Start the container automatically
+
+**See the [macOS Installation Guide](docs/wiki/macOS-Installation.md) for detailed instructions.**
+
 ### Installation
 
 #### Option 1: Docker Run (Recommended for Testing)
@@ -209,6 +229,27 @@ The automated script handles:
 - Interactive printer setup
 
 **Manual installation:** Follow the [Windows Installation Guide](docs/wiki/Windows-Installation.md) for step-by-step Docker Desktop or Podman Desktop setup.
+
+### macOS 🍎
+
+**See the comprehensive [macOS Installation Guide](docs/wiki/macOS-Installation.md)**
+
+**Quick automated install:**
+```bash
+curl -O https://raw.githubusercontent.com/neospektra/bambu-farm-monitor/main/scripts/install-macos.sh
+chmod +x install-macos.sh
+./install-macos.sh
+```
+
+The automated script handles:
+- Homebrew installation (if needed)
+- Docker Desktop or Podman Desktop installation via Homebrew
+- Image download and container configuration
+- Interactive printer setup
+
+**Works on both Intel and Apple Silicon (M1/M2/M3) Macs!**
+
+**Manual installation:** Follow the [macOS Installation Guide](docs/wiki/macOS-Installation.md) for step-by-step Docker Desktop or Podman Desktop setup.
 
 ### QNAP NAS
 

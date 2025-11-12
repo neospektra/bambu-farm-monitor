@@ -2,6 +2,132 @@
 
 This directory contains automated installation scripts for Bambu Farm Monitor.
 
+## macOS Installation Script
+
+### `install-macos.sh`
+
+Automated bash script that installs Docker Desktop (or Podman Desktop) and sets up Bambu Farm Monitor on macOS.
+
+#### Features
+
+- ✅ Checks for existing Docker/Podman installation
+- ✅ **Automatically installs Homebrew** (if not present)
+- ✅ **Automatically installs Docker Desktop via Homebrew** (no manual download needed!)
+- ✅ Alternatively installs Podman Desktop via Homebrew
+- ✅ Pulls the latest Bambu Farm Monitor image
+- ✅ Interactive printer configuration (up to 4 printers)
+- ✅ Choice between Docker Compose or Docker Run deployment
+- ✅ Automatic container startup and verification
+- ✅ Colored output and progress indicators
+- ✅ Comprehensive error handling
+- ✅ Works on both Intel and Apple Silicon Macs
+
+#### Usage
+
+**Method 1: Direct Download and Run**
+
+```bash
+# Download the script
+curl -O https://raw.githubusercontent.com/neospektra/bambu-farm-monitor/main/scripts/install-macos.sh
+
+# Make it executable
+chmod +x install-macos.sh
+
+# Run it
+./install-macos.sh
+```
+
+**Method 2: Clone Repository**
+
+```bash
+# Clone the repository
+git clone https://github.com/neospektra/bambu-farm-monitor.git
+cd bambu-farm-monitor
+
+# Run the script
+./scripts/install-macos.sh
+```
+
+#### What the Script Does
+
+1. **System Check**
+   - Verifies running on macOS
+   - Checks for existing Docker or Podman installation
+
+2. **Homebrew Installation** (if needed)
+   - Installs Homebrew package manager
+   - Configures PATH for Apple Silicon Macs
+
+3. **Container Runtime Installation** (if needed)
+   - Offers choice between Docker Desktop and Podman Desktop
+   - **Automatically installs via Homebrew** (fully automated!)
+   - Opens the application and waits for it to start
+   - Verifies installation is working
+
+4. **Image Download**
+   - Pulls the latest `neospektra/bambu-farm-monitor:latest` image from Docker Hub
+
+5. **Printer Configuration**
+   - Optionally configures up to 4 printers interactively
+   - Collects IP address, access code, name, and serial number for each printer
+
+6. **Deployment**
+   - Choice 1: Creates `docker-compose.yml` in `~/bambu-farm-monitor`
+   - Choice 2: Runs container using `docker run` command
+   - Starts the container with all configured printers
+
+7. **Verification**
+   - Checks if container is running
+   - Provides next steps and useful commands
+   - Optionally opens the dashboard in your browser
+
+#### Prerequisites
+
+- macOS 11 (Big Sur) or later
+- Internet connection
+- Administrator access
+
+#### Troubleshooting
+
+**Script won't run - "Permission denied"**
+
+Make sure the script is executable:
+```bash
+chmod +x install-macos.sh
+```
+
+**Homebrew installation prompts for password**
+
+This is normal. Homebrew needs administrator privileges to install.
+
+**Docker/Podman Desktop won't start**
+
+- Check System Preferences → Security & Privacy
+- You may need to approve Docker/Podman to run
+- Restart your Mac and try again
+
+**Apple Silicon (M1/M2/M3) specific issues**
+
+- Make sure to download the ARM64 version of Docker Desktop
+- Homebrew will automatically handle this
+- PATH configuration is handled automatically by the script
+
+**Container fails to start**
+
+Check the logs:
+```bash
+docker logs bambu-farm-monitor
+# or
+podman logs bambu-farm-monitor
+```
+
+Common causes:
+- Port already in use (change ports in docker-compose.yml)
+- Invalid printer configuration
+- Docker/Podman not fully initialized
+
+---
+
 ## Windows Installation Script
 
 ### `install-windows.ps1`
@@ -200,7 +326,6 @@ For issues or questions:
 
 Additional installation scripts for other platforms may be added here:
 - `install-linux.sh` - Linux automated installer
-- `install-macos.sh` - macOS automated installer
 - `install-synology.sh` - Synology NAS installer
 - `install-unraid.sh` - Unraid installer
 
