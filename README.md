@@ -50,6 +50,23 @@ A comprehensive web-based monitoring solution for multiple Bambu Lab 3D printers
 
 The image name `neospektra/bambu-farm-monitor:latest` automatically pulls from Docker Hub.
 
+### Windows Automated Installation 🪟
+
+**Windows users**: We have an automated installer that makes setup super easy!
+
+```powershell
+# Download and run the automated installer
+.\scripts\install-windows.ps1
+```
+
+The script will:
+- ✅ Check and install Docker Desktop or Podman Desktop via winget
+- ✅ Download the latest image
+- ✅ Configure your printers interactively
+- ✅ Start the container automatically
+
+**See the [Windows Installation Guide](docs/wiki/Windows-Installation.md) for detailed instructions.**
+
 ### Installation
 
 #### Option 1: Docker Run (Recommended for Testing)
@@ -176,6 +193,22 @@ docker run -d \
 ```
 
 ## 🏢 Platform-Specific Deployment
+
+### Windows 🪟
+
+**See the comprehensive [Windows Installation Guide](docs/wiki/Windows-Installation.md)**
+
+**Quick automated install:**
+```powershell
+.\scripts\install-windows.ps1
+```
+
+The automated script handles:
+- Docker Desktop or Podman Desktop installation via winget
+- Image download and container configuration
+- Interactive printer setup
+
+**Manual installation:** Follow the [Windows Installation Guide](docs/wiki/Windows-Installation.md) for step-by-step Docker Desktop or Podman Desktop setup.
 
 ### QNAP NAS
 
