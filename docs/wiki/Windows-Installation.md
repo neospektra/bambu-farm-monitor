@@ -19,10 +19,8 @@ Before you begin, ensure you have:
 
 1. **Windows 10/11 (64-bit)** with latest updates
 2. **Administrator access** on your computer
-3. **WSL 2** (Windows Subsystem for Linux) - Required for Docker Desktop
-4. **Virtualization enabled** in BIOS/UEFI
-5. **At least 4GB RAM** available for containers
-6. **Network access** to your Bambu Lab printers
+3. **At least 4GB RAM** available for containers
+4. **Network access** to your Bambu Lab printers
 
 ### Printer Information Needed
 
@@ -36,7 +34,7 @@ For each printer you want to monitor, gather:
 
 ## Automated Installation
 
-We provide a PowerShell script that automates the entire setup process!
+We provide a PowerShell script that automates the entire setup process using winget!
 
 ### Quick Start
 
@@ -44,7 +42,7 @@ We provide a PowerShell script that automates the entire setup process!
    - Download [`install-windows.ps1`](https://raw.githubusercontent.com/neospektra/bambu-farm-monitor/main/scripts/install-windows.ps1)
    - Or clone this repository
 
-2. **Run the script:**
+2. **Run the script as Administrator:**
    - Right-click `install-windows.ps1` and select **"Run with PowerShell"**
    - Or open PowerShell as Administrator and run:
      ```powershell
@@ -52,10 +50,11 @@ We provide a PowerShell script that automates the entire setup process!
      .\scripts\install-windows.ps1
      ```
 
-3. **Follow the prompts:**
-   - The script will check if Docker/Podman is installed
-   - Guide you through installation if needed
-   - Set up and run Bambu Farm Monitor
+3. **The script will automatically:**
+   - Check if Docker/Podman is installed
+   - Install Docker Desktop via winget if needed (fully automated!)
+   - Download the latest Bambu Farm Monitor image
+   - Set up and run the container
    - Configure your printers interactively
 
 4. **Access your dashboard:**
@@ -71,33 +70,29 @@ If you prefer to install manually or the automated script doesn't work, follow t
 
 ### Option 1: Docker Desktop (Recommended)
 
-#### Step 1: Install WSL 2
+#### Step 1: Install via winget (Easiest)
 
-Docker Desktop requires WSL 2. Open PowerShell as Administrator and run:
+Open PowerShell as Administrator and run:
 
 ```powershell
-wsl --install
+winget install --id=Docker.DockerDesktop -e --accept-source-agreements --accept-package-agreements
 ```
 
-**Restart your computer** when prompted.
-
-#### Step 2: Download Docker Desktop
+**Or download manually:**
 
 1. Visit: https://www.docker.com/products/docker-desktop/
 2. Click **"Download for Windows"**
 3. Run the installer (`Docker Desktop Installer.exe`)
-4. Follow the installation wizard:
-   - ✅ Enable **"Use WSL 2 instead of Hyper-V"** (recommended)
-   - ✅ Enable **"Add shortcut to desktop"** (optional)
+4. Follow the installation wizard
 
-#### Step 3: Start Docker Desktop
+#### Step 2: Start Docker Desktop
 
 1. Launch **Docker Desktop** from the Start menu
-2. Accept the license agreement
+2. Accept the license agreement if prompted
 3. Wait for Docker Engine to start (icon in system tray will stop animating)
 4. You may need to sign in or skip sign-in
 
-#### Step 4: Verify Installation
+#### Step 3: Verify Installation
 
 Open PowerShell and run:
 
@@ -114,7 +109,15 @@ You should see the Docker version and an empty container list.
 
 Podman is a Docker alternative that doesn't require Docker Desktop licensing.
 
-#### Step 1: Download Podman Desktop
+#### Step 1: Install via winget (Easiest)
+
+Open PowerShell as Administrator and run:
+
+```powershell
+winget install --id=RedHat.Podman-Desktop -e --accept-source-agreements --accept-package-agreements
+```
+
+**Or download manually:**
 
 1. Visit: https://podman-desktop.io/downloads/windows
 2. Download the latest Windows installer
@@ -326,19 +329,15 @@ docker pull neospektra/bambu-farm-monitor:latest
 
 ### Docker Desktop won't start
 
-**Error:** "WSL 2 installation is incomplete"
-- **Solution:** Open PowerShell as Admin and run:
-  ```powershell
-  wsl --install
-  wsl --update
-  ```
-  Then restart your computer.
-
 **Error:** "Hardware assisted virtualization is not enabled"
 - **Solution:** Enable virtualization in your BIOS/UEFI settings:
   1. Restart computer and enter BIOS (usually F2, F10, or Delete key)
   2. Look for "Virtualization Technology", "Intel VT-x", or "AMD-V"
   3. Enable it and save settings
+
+**Docker Desktop won't install via winget:**
+- **Solution:** Try installing manually from https://www.docker.com/products/docker-desktop/
+- Or ensure Windows is fully updated and try winget again
 
 ### Port conflicts
 
@@ -398,17 +397,14 @@ Common causes:
 
 ## Performance Tips
 
-### Adjust WSL 2 Memory (Docker Desktop)
+### Adjust Docker Desktop Memory
 
-If Docker Desktop is using too much memory, create/edit `C:\Users\YourUsername\.wslconfig`:
+If Docker Desktop is using too much memory:
 
-```ini
-[wsl2]
-memory=4GB
-processors=2
-```
-
-Restart Docker Desktop after making changes.
+1. Open Docker Desktop Settings
+2. Go to **Resources**
+3. Adjust **Memory** and **CPU** limits as needed
+4. Click **Apply & Restart**
 
 ### Enable Auto-start
 

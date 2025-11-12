@@ -60,8 +60,7 @@ The image name `neospektra/bambu-farm-monitor:latest` automatically pulls from D
 ```
 
 The script will:
-- ✅ Check and install Docker Desktop or Podman Desktop
-- ✅ Install WSL 2 if needed
+- ✅ Check and install Docker Desktop or Podman Desktop via winget
 - ✅ Download the latest image
 - ✅ Configure your printers interactively
 - ✅ Start the container automatically
@@ -205,8 +204,7 @@ docker run -d \
 ```
 
 The automated script handles:
-- Docker Desktop or Podman Desktop installation
-- WSL 2 setup (for Docker)
+- Docker Desktop or Podman Desktop installation via winget
 - Image download and container configuration
 - Interactive printer setup
 

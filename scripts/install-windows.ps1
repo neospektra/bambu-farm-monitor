@@ -52,17 +52,6 @@ function Test-Administrator {
     return $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 }
 
-# Check if WSL 2 is installed
-function Test-WSL2 {
-    try {
-        $wslVersion = wsl --status 2>&1
-        return $wslVersion -match "Default Version: 2"
-    }
-    catch {
-        return $false
-    }
-}
-
 # Check if Docker is installed and running
 function Test-Docker {
     try {
@@ -87,59 +76,131 @@ function Test-Podman {
     }
 }
 
-# Install WSL 2
-function Install-WSL2 {
-    Write-Header "Installing WSL 2"
-    Write-Info "Installing Windows Subsystem for Linux..."
-
+# Check if winget is available
+function Test-Winget {
     try {
-        wsl --install --no-distribution
-        Write-Success "WSL 2 installation initiated"
-        Write-Warning "You will need to restart your computer after this script completes"
+        $null = winget --version 2>&1
         return $true
     }
     catch {
-        Write-Error "Failed to install WSL 2: $_"
         return $false
     }
 }
 
-# Install Docker Desktop
+# Install Docker Desktop using winget
 function Install-DockerDesktop {
-    Write-Header "Docker Desktop Installation"
-    Write-Info "Docker Desktop needs to be installed manually."
-    Write-Host ""
-    Write-ColorOutput "Please follow these steps:" "Yellow"
-    Write-Host "1. Visit: https://www.docker.com/products/docker-desktop/"
-    Write-Host "2. Click 'Download for Windows'"
-    Write-Host "3. Run the installer"
-    Write-Host "4. Enable 'Use WSL 2 instead of Hyper-V' (recommended)"
-    Write-Host "5. Complete the installation and restart if prompted"
-    Write-Host "6. Start Docker Desktop and wait for it to fully initialize"
+    Write-Header "Installing Docker Desktop"
+
+    if (-not (Test-Winget)) {
+        Write-Error "winget is not available on this system"
+        Write-Info "Please install Docker Desktop manually from: https://www.docker.com/products/docker-desktop/"
+        Write-Host ""
+        $response = Read-Host "Press Enter when Docker Desktop is installed and running, or type 'cancel' to exit"
+        return $response -ne "cancel"
+    }
+
+    Write-Info "Installing Docker Desktop via winget..."
+    Write-Warning "This may take several minutes..."
     Write-Host ""
 
-    $response = Read-Host "Press Enter when Docker Desktop is installed and running, or type 'skip' to try Podman instead"
+    try {
+        $installResult = winget install --id=Docker.DockerDesktop -e --accept-source-agreements --accept-package-agreements 2>&1
 
-    return $response -ne "skip"
+        if ($LASTEXITCODE -eq 0 -or $installResult -match "successfully installed") {
+            Write-Success "Docker Desktop installed successfully!"
+            Write-Host ""
+            Write-Warning "Docker Desktop has been installed but needs to be started"
+            Write-Info "Please start Docker Desktop from the Start menu and wait for it to fully initialize"
+            Write-Info "This may take 1-2 minutes on first launch"
+            Write-Host ""
+            Read-Host "Press Enter when Docker Desktop is running (check system tray for Docker icon)"
+            return $true
+        }
+        else {
+            Write-Warning "winget installation may have encountered an issue"
+            Write-Info "Attempting to verify if Docker was installed..."
+
+            # Wait a moment and check if docker is available
+            Start-Sleep -Seconds 2
+
+            if (Test-Docker) {
+                Write-Success "Docker Desktop is available and running!"
+                return $true
+            }
+            else {
+                Write-Error "Docker Desktop installation did not complete successfully"
+                Write-Info "Please install manually from: https://www.docker.com/products/docker-desktop/"
+                Write-Host ""
+                $response = Read-Host "Press Enter when Docker Desktop is installed and running, or type 'cancel' to exit"
+                return $response -ne "cancel"
+            }
+        }
+    }
+    catch {
+        Write-Error "Failed to install Docker Desktop: $_"
+        Write-Info "Please install manually from: https://www.docker.com/products/docker-desktop/"
+        Write-Host ""
+        $response = Read-Host "Press Enter when Docker Desktop is installed and running, or type 'cancel' to exit"
+        return $response -ne "cancel"
+    }
 }
 
-# Install Podman Desktop
+# Install Podman Desktop using winget
 function Install-PodmanDesktop {
-    Write-Header "Podman Desktop Installation"
-    Write-Info "Podman Desktop is a free alternative to Docker Desktop."
-    Write-Host ""
-    Write-ColorOutput "Please follow these steps:" "Yellow"
-    Write-Host "1. Visit: https://podman-desktop.io/downloads/windows"
-    Write-Host "2. Download the latest Windows installer"
-    Write-Host "3. Run the installer"
-    Write-Host "4. Start Podman Desktop"
-    Write-Host "5. Click 'Initialize and start' if prompted"
-    Write-Host "6. Wait for the Podman machine to start"
+    Write-Header "Installing Podman Desktop"
+
+    if (-not (Test-Winget)) {
+        Write-Error "winget is not available on this system"
+        Write-Info "Please install Podman Desktop manually from: https://podman-desktop.io/downloads/windows"
+        Write-Host ""
+        $response = Read-Host "Press Enter when Podman Desktop is installed and running, or type 'cancel' to exit"
+        return $response -ne "cancel"
+    }
+
+    Write-Info "Installing Podman Desktop via winget..."
+    Write-Warning "This may take several minutes..."
     Write-Host ""
 
-    $response = Read-Host "Press Enter when Podman Desktop is installed and running, or type 'cancel' to exit"
+    try {
+        $installResult = winget install --id=RedHat.Podman-Desktop -e --accept-source-agreements --accept-package-agreements 2>&1
 
-    return $response -ne "cancel"
+        if ($LASTEXITCODE -eq 0 -or $installResult -match "successfully installed") {
+            Write-Success "Podman Desktop installed successfully!"
+            Write-Host ""
+            Write-Warning "Podman Desktop has been installed but needs to be started"
+            Write-Info "Please start Podman Desktop from the Start menu"
+            Write-Info "Click 'Initialize and start' if prompted"
+            Write-Host ""
+            Read-Host "Press Enter when Podman Desktop is running"
+            return $true
+        }
+        else {
+            Write-Warning "winget installation may have encountered an issue"
+            Write-Info "Attempting to verify if Podman was installed..."
+
+            # Wait a moment and check if podman is available
+            Start-Sleep -Seconds 2
+
+            if (Test-Podman) {
+                Write-Success "Podman Desktop is available and running!"
+                return $true
+            }
+            else {
+                Write-Error "Podman Desktop installation did not complete successfully"
+                Write-Info "Please install manually from: https://podman-desktop.io/downloads/windows"
+                Write-Host ""
+                $response = Read-Host "Press Enter when Podman Desktop is installed and running, or type 'cancel' to exit"
+                return $response -ne "cancel"
+            }
+        }
+    }
+    catch {
+        Write-Error "Failed to install Podman Desktop: $_"
+        Write-Info "Please install manually from: https://podman-desktop.io/downloads/windows"
+        Write-Host ""
+        $response = Read-Host "Press Enter when Podman Desktop is installed and running, or type 'cancel' to exit"
+        return $response -ne "cancel"
+    }
 }
 
 # Get printer information from user
@@ -233,6 +294,8 @@ function Start-Installation {
     # Check administrator privileges
     if (-not (Test-Administrator)) {
         Write-Warning "This script should be run as Administrator for best results."
+        Write-Warning "Installation via winget requires Administrator privileges."
+        Write-Host ""
         $continue = Read-Host "Continue anyway? (y/n)"
         if ($continue -ne "y") {
             Write-Info "Please right-click the script and select 'Run as Administrator'"
@@ -243,7 +306,6 @@ function Start-Installation {
     # Determine which container runtime to use
     $useDocker = $false
     $usePodman = $false
-    $needsRestart = $false
 
     Write-Header "Checking System Requirements"
 
@@ -262,69 +324,52 @@ function Start-Installation {
         Write-Warning "Neither Docker nor Podman is installed"
         Write-Host ""
         Write-ColorOutput "Choose your container runtime:" "Yellow"
-        Write-Host "1. Docker Desktop (recommended, requires WSL 2)"
-        Write-Host "2. Podman Desktop (free alternative)"
+        Write-Host "1. Docker Desktop (recommended, will install automatically via winget)"
+        Write-Host "2. Podman Desktop (free alternative, will install automatically via winget)"
         Write-Host ""
 
         $choice = Read-Host "Enter your choice (1 or 2)"
 
         if ($choice -eq "1") {
-            # Check WSL 2
-            if (-not (Test-WSL2)) {
-                Write-Warning "WSL 2 is not installed"
-                $installWSL = Read-Host "Install WSL 2 now? (y/n)"
-
-                if ($installWSL -eq "y") {
-                    if (Install-WSL2) {
-                        $needsRestart = $true
-                    }
-                    else {
-                        Write-Error "Failed to install WSL 2. Please install manually."
-                        exit 1
-                    }
-                }
-            }
-            else {
-                Write-Success "WSL 2 is already installed"
-            }
-
             # Install Docker Desktop
             if (Install-DockerDesktop) {
+                # Refresh PATH to pick up Docker
+                $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+
+                # Test again after installation
                 if (Test-Docker) {
                     Write-Success "Docker Desktop is ready!"
                     $useDocker = $true
                 }
                 else {
-                    Write-Error "Docker Desktop is not running. Please start it and run this script again."
+                    Write-Warning "Docker Desktop may not be fully started yet"
+                    Write-Info "Please make sure Docker Desktop is running and try again"
+                    Write-Host ""
+                    Read-Host "Press Enter to exit"
                     exit 1
                 }
             }
             else {
-                Write-Info "Switching to Podman Desktop installation..."
-                if (Install-PodmanDesktop) {
-                    if (Test-Podman) {
-                        Write-Success "Podman Desktop is ready!"
-                        $usePodman = $true
-                    }
-                    else {
-                        Write-Error "Podman Desktop is not running. Please start it and run this script again."
-                        exit 1
-                    }
-                }
-                else {
-                    Write-Error "Installation cancelled"
-                    exit 1
-                }
+                Write-Error "Installation cancelled"
+                exit 1
             }
         }
         elseif ($choice -eq "2") {
+            # Install Podman Desktop
             if (Install-PodmanDesktop) {
+                # Refresh PATH to pick up Podman
+                $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+
+                # Test again after installation
                 if (Test-Podman) {
                     Write-Success "Podman Desktop is ready!"
                     $usePodman = $true
                 }
                 else {
-                    Write-Error "Podman Desktop is not running. Please start it and run this script again."
+                    Write-Warning "Podman Desktop may not be fully started yet"
+                    Write-Info "Please make sure Podman Desktop is running and try again"
+                    Write-Host ""
+                    Read-Host "Press Enter to exit"
                     exit 1
                 }
             }
@@ -337,16 +382,6 @@ function Start-Installation {
             Write-Error "Invalid choice"
             exit 1
         }
-    }
-
-    # If restart is needed, inform user and exit
-    if ($needsRestart) {
-        Write-Header "Restart Required"
-        Write-Warning "Your computer needs to be restarted to complete WSL 2 installation"
-        Write-Info "After restart, install Docker Desktop and run this script again"
-        Write-Host ""
-        Read-Host "Press Enter to exit"
-        exit 0
     }
 
     # Set command based on runtime

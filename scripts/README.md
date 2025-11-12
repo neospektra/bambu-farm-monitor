@@ -11,8 +11,8 @@ Automated PowerShell script that installs Docker Desktop (or Podman Desktop) and
 #### Features
 
 - ✅ Checks for existing Docker/Podman installation
-- ✅ Guides through Docker Desktop or Podman Desktop installation
-- ✅ Installs WSL 2 if needed (for Docker Desktop)
+- ✅ **Automatically installs Docker Desktop via winget** (no manual download needed!)
+- ✅ Alternatively installs Podman Desktop via winget
 - ✅ Pulls the latest Bambu Farm Monitor image
 - ✅ Interactive printer configuration (up to 4 printers)
 - ✅ Choice between Docker Compose or Docker Run deployment
@@ -56,13 +56,13 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/neospektra/bambu-farm-
 #### What the Script Does
 
 1. **System Check**
-   - Verifies administrator privileges (recommended but not required)
+   - Verifies administrator privileges (recommended for winget)
    - Checks for existing Docker or Podman installation
 
 2. **Installation (if needed)**
    - Offers choice between Docker Desktop and Podman Desktop
-   - Installs WSL 2 if Docker Desktop is chosen and WSL isn't installed
-   - Guides through Docker/Podman Desktop installation
+   - **Automatically installs via winget** (fully automated!)
+   - Falls back to manual installation if winget is unavailable
    - Verifies installation is working
 
 3. **Image Download**
@@ -87,7 +87,7 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/neospektra/bambu-farm-
 - Windows 10/11 (64-bit)
 - PowerShell 5.1 or later (pre-installed on Windows 10/11)
 - Internet connection
-- Administrator access (recommended)
+- Administrator access (required for winget installation)
 
 #### Troubleshooting
 
@@ -109,12 +109,11 @@ Then run the script again.
 - Restart your terminal/PowerShell window
 - Run the script again
 
-**WSL 2 installation requires restart**
+**winget not available**
 
-If WSL 2 is installed during the script:
-1. Restart your computer
-2. Install Docker Desktop manually or wait for the script to guide you
-3. Run the script again to complete the setup
+- winget comes pre-installed on Windows 11 and Windows 10 (version 1809+)
+- If winget is missing, the script will fall back to manual installation instructions
+- Or update Windows to get winget automatically
 
 **Container fails to start**
 
